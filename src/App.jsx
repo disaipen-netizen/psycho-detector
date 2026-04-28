@@ -44,7 +44,10 @@ function UrgencyTimer() {
 
 // ─── Share Card ───────────────────────────────────────────────────────────────
 function ShareCard({ data, onClose }) {
-  const canvasRef=useRef(); const [ready,setReady]=useState(false);
+  const canvasRef=useRef();
+  const [imgUrl,setImgUrl]=useState(null);
+  const [copied,setCopied]=useState(false);
+
   useEffect(()=>{
     const canvas=canvasRef.current; if(!canvas) return;
     const ctx=canvas.getContext("2d"); const W=360,H=640;
@@ -72,19 +75,72 @@ function ShareCard({ data, onClose }) {
     ctx.strokeStyle="#00ffcc44"; ctx.stroke();
     ctx.fillStyle="#00ffcc"; ctx.font="bold 14px sans-serif"; ctx.fillText("Проверь своего собеседника",W/2,H-90);
     ctx.fillStyle="#00ffcc77"; ctx.font="12px monospace"; ctx.fillText("psycho-detector.app",W/2,H-64);
-    setReady(true);
+    // Конвертируем в img для мобильных
+    setImgUrl(canvas.toDataURL("image/png"));
   },[data]);
-  const handleDownload=()=>{ canvasRef.current.toBlob(blob=>{ const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url;a.download="psycho-result.png";a.click(); URL.revokeObjectURL(url); }); };
+
+  const handleShare = async () => {
+    // Пробуем Web Share API (работает на мобильных)
+    if (navigator.share && imgUrl) {
+      try {
+        const res = await fetch(imgUrl);
+        const blob = await res.blob();
+        const file = new File([blob], "psycho-result.png", { type: "image/png" });
+        await navigator.share({ files: [file], title: "Psycho Detector", text: `${data.name} — токсичность ${data.toxicity}%` });
+        return;
+      } catch(e) { /* fallback */ }
+    }
+    // Fallback — скачать
+    if (imgUrl) {
+      const a = document.createElement("a");
+      a.href = imgUrl; a.download = "psycho-result.png"; a.click();
+    }
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText("t.me/psychodetector_bot/PsychoDetector");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div style={{position:"fixed",inset:0,background:"#000000cc",zIndex:100,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20}}>
+    <div style={{position:"fixed",inset:0,background:"#000000dd",zIndex:100,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,overflowY:"auto"}}>
+      {/* Скрытый canvas для генерации */}
+      <canvas ref={canvasRef} style={{display:"none"}}/>
+
       <div style={{background:"#0d0d1a",borderRadius:16,padding:20,maxWidth:400,width:"100%"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
           <span style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#00ffcc",letterSpacing:2}}>КАРТОЧКА ДЛЯ STORY</span>
           <button onClick={onClose} style={{background:"none",border:"none",color:"#444",fontSize:20,cursor:"pointer"}}>✕</button>
         </div>
-        <canvas ref={canvasRef} style={{width:"100%",borderRadius:10,display:"block"}}/>
-        <button onClick={handleDownload} disabled={!ready} style={{width:"100%",marginTop:14,background:"linear-gradient(135deg,#00ffcc,#00cc99)",border:"none",borderRadius:10,padding:"13px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#000",cursor:"pointer",letterSpacing:1}}>⬇ Скачать и поделиться</button>
-        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#333",textAlign:"center",marginTop:10}}>Сохрани → загрузи в Stories</p>
+
+        {/* Картинка — на мобильном зажми для сохранения */}
+        {imgUrl && (
+          <div style={{position:"relative",marginBottom:12}}>
+            <img src={imgUrl} alt="Psycho Result"
+              style={{width:"100%",borderRadius:10,display:"block"}}/>
+            {/* Подсказка поверх картинки */}
+            <div style={{position:"absolute",bottom:10,left:0,right:0,textAlign:"center"}}>
+              <span style={{background:"#000000aa",borderRadius:20,padding:"6px 14px",fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#fff"}}>
+                👆 Зажми картинку → Сохранить
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Кнопка поделиться (Web Share API) */}
+        <button onClick={handleShare} style={{width:"100%",marginBottom:10,background:"linear-gradient(135deg,#00ffcc,#00cc99)",border:"none",borderRadius:10,padding:"13px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#000",cursor:"pointer",letterSpacing:1}}>
+          📤 Поделиться картинкой
+        </button>
+
+        {/* Кнопка скопировать ссылку */}
+        <button onClick={handleCopyLink} style={{width:"100%",background:copied?"#00ffcc22":"transparent",border:"1px solid #00ffcc33",borderRadius:10,padding:"11px",fontFamily:"'Share Tech Mono',monospace",fontSize:12,color:"#00ffcc",cursor:"pointer",transition:"all .3s"}}>
+          {copied ? "✓ Ссылка скопирована!" : "🔗 Скопировать ссылку на бота"}
+        </button>
+
+        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#333",textAlign:"center",marginTop:10,lineHeight:1.6}}>
+          На телефоне: зажми картинку → Сохранить фото → загрузи в Stories
+        </p>
       </div>
     </div>
   );
