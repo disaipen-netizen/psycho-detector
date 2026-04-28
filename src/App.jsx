@@ -8,7 +8,21 @@ function ScanLine() {
   return (<><div style={{position:"absolute",left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#00ffcc55,transparent)",animation:"scan 2.6s linear infinite",pointerEvents:"none",zIndex:10}}/><style>{`@keyframes scan{0%{top:-4px}100%{top:110%}}`}</style></>);
 }
 function toBase64(file) {
-  return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(",")[1]); r.onerror=rej; r.readAsDataURL(file); });
+  return new Promise((res,rej)=>{
+    if (!file || !(file instanceof Blob)) { rej(new Error("Invalid file")); return; }
+    const r=new FileReader();
+    r.onload=()=>{
+      const result = r.result;
+      if (typeof result === "string" && result.includes(",")) {
+        res(result.split(",")[1]);
+      } else {
+        rej(new Error("FileReader failed"));
+      }
+    };
+    r.onerror=()=>rej(new Error("FileReader error"));
+    r.readAsDataURL(file);
+  });
+}
 }
 
 // ─── Живой счётчик ────────────────────────────────────────────────────────────
