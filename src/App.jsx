@@ -8,21 +8,7 @@ function ScanLine() {
   return (<><div style={{position:"absolute",left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#00ffcc55,transparent)",animation:"scan 2.6s linear infinite",pointerEvents:"none",zIndex:10}}/><style>{`@keyframes scan{0%{top:-4px}100%{top:110%}}`}</style></>);
 }
 function toBase64(file) {
-  return new Promise((res,rej)=>{
-    if (!file || !(file instanceof Blob)) { rej(new Error("Invalid file")); return; }
-    const r=new FileReader();
-    r.onload=()=>{
-      const result = r.result;
-      if (typeof result === "string" && result.includes(",")) {
-        res(result.split(",")[1]);
-      } else {
-        rej(new Error("FileReader failed"));
-      }
-    };
-    r.onerror=()=>rej(new Error("FileReader error"));
-    r.readAsDataURL(file);
-  });
-}
+  return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(",")[1]); r.onerror=rej; r.readAsDataURL(file); });
 }
 
 // ─── Живой счётчик ────────────────────────────────────────────────────────────
@@ -580,20 +566,21 @@ function ScreenError({ message, onReset }) {
 }
 
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
+function safeGet(key){try{return localStorage.getItem(key);}catch(e){return null;}}
+function safeSet(key,val){try{localStorage.setItem(key,val);}catch(e){}}
+
 export default function App() {
-  const [screen,setScreen]=useState("onboarding");
+  const [screen,setScreen]=useState("welcome");
   const [result,setResult]=useState(null);
   const [error,setError]=useState("");
   const [isVoice,setIsVoice]=useState(false);
 
-  // Показываем онбординг только первый раз
   useEffect(()=>{
-    const seen=localStorage.getItem("pd_onboarding");
-    if(seen) setScreen("welcome");
+    try{ if(!safeGet("pd_ob")) setScreen("onboarding"); }catch(e){}
   },[]);
 
   const handleAnalyze=useCallback(async payload=>{
-    setIsVoice(!!payload.audio);
+    setIsVoice(!!(payload.audios||payload.audio));
     setScreen("scanning");
     try {
       const res=await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
@@ -603,7 +590,7 @@ export default function App() {
     } catch(e){ setError(e.message); setScreen("error"); }
   },[]);
 
-  const doneOnboarding=()=>{ localStorage.setItem("pd_onboarding","1"); setScreen("welcome"); };
+  const doneOnboarding=()=>{ safeSet("pd_ob","1"); setScreen("welcome"); };
   const reset=()=>{ setScreen("welcome"); setResult(null); setError(""); };
 
   return (
