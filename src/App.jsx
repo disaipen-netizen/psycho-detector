@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
-// ─── tiny helpers ─────────────────────────────────────────────────────────────
+// --- tiny helpers -------------------------------------------------------------
 function Noise() {
   return <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:0,opacity:.035,backgroundImage:`url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`}}/>;
 }
@@ -11,7 +11,7 @@ function toBase64(file) {
   return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(",")[1]); r.onerror=rej; r.readAsDataURL(file); });
 }
 
-// ─── Живой счётчик ────────────────────────────────────────────────────────────
+// --- Живой счётчик ------------------------------------------------------------
 function LiveCounter() {
   const [count,setCount]=useState(14823);
   useEffect(()=>{ const tick=()=>{ setCount(c=>c+Math.floor(Math.random()*3)+1); setTimeout(tick,8000+Math.random()*12000); }; const t=setTimeout(tick,4000); return()=>clearTimeout(t); },[]);
@@ -26,7 +26,7 @@ function LiveCounter() {
   );
 }
 
-// ─── Таймер срочности ─────────────────────────────────────────────────────────
+// --- Таймер срочности ---------------------------------------------------------
 function UrgencyTimer() {
   const [secs,setSecs]=useState(24*60*60);
   useEffect(()=>{ const id=setInterval(()=>setSecs(s=>Math.max(0,s-1)),1000); return()=>clearInterval(id); },[]);
@@ -42,7 +42,7 @@ function UrgencyTimer() {
   );
 }
 
-// ─── Share Card ───────────────────────────────────────────────────────────────
+// --- Share Card ---------------------------------------------------------------
 function ShareCard({ data, onClose }) {
   const canvasRef=useRef();
   const [imgUrl,setImgUrl]=useState(null);
@@ -146,7 +146,7 @@ function ShareCard({ data, onClose }) {
   );
 }
 
-// ─── Gauge & TraitBar ─────────────────────────────────────────────────────────
+// --- Gauge & TraitBar ---------------------------------------------------------
 function ToxicGauge({ value }) {
   const [display,setDisplay]=useState(0); const r=54,circ=2*Math.PI*r;
   const color=value>70?"#ff2d78":value>40?"#ffaa00":"#00ffcc";
@@ -172,7 +172,7 @@ function TraitBar({ label, value, color, delay=0 }) {
   );
 }
 
-// ─── 🆕 ОНБОРДИНГ — экран инструкции ─────────────────────────────────────────
+// --- 🆕 ОНБОРДИНГ — экран инструкции -----------------------------------------
 const ONBOARDING_STEPS = [
   { icon:"📸", title:"Загрузи скриншот", desc:"Сделай скриншот переписки или скопируй текст сообщений" },
   { icon:"🎤", title:"Или голосовое", desc:"Запиши или загрузи голосовое сообщение — мы расшифруем и проанализируем" },
@@ -220,7 +220,7 @@ function ScreenOnboarding({ onDone }) {
   );
 }
 
-// ─── 🆕 ПОДДЕРЖКА — кнопка и модалка ─────────────────────────────────────────
+// --- 🆕 ПОДДЕРЖКА — кнопка и модалка -----------------------------------------
 function SupportButton() {
   const [open, setOpen] = useState(false);
   return (
@@ -259,7 +259,7 @@ function SupportButton() {
   );
 }
 
-// ─── Screen 1: Welcome ────────────────────────────────────────────────────────
+// --- Screen 1: Welcome --------------------------------------------------------
 function ScreenWelcome({ onAnalyze }) {
   const [mode,setMode]=useState("image");
   const [text,setText]=useState("");
@@ -272,7 +272,7 @@ function ScreenWelcome({ onAnalyze }) {
 
   useEffect(()=>{ const id=setInterval(()=>setPulse(p=>!p),1800); return()=>clearInterval(id); },[]);
 
-  // ── Добавить скриншоты (до 10) ──
+  // --- Добавить скриншоты (до 10) --
   const handleImages=e=>{
     const files=Array.from(e.target.files);
     const items=files.map(f=>({file:f,url:URL.createObjectURL(f)}));
@@ -281,7 +281,7 @@ function ScreenWelcome({ onAnalyze }) {
   };
   const removeImage=i=>setImages(prev=>prev.filter((_,idx)=>idx!==i));
 
-  // ── Добавить аудио (до 5) ──
+  // --- Добавить аудио (до 5) --
   const handleAudios=e=>{
     const files=Array.from(e.target.files);
     const items=files.map(f=>({file:f,url:URL.createObjectURL(f)}));
@@ -290,7 +290,7 @@ function ScreenWelcome({ onAnalyze }) {
   };
   const removeAudio=i=>setAudios(prev=>prev.filter((_,idx)=>idx!==i));
 
-  // ── Запись голоса ──
+  // --- Запись голоса --
   const startRec=async()=>{
     try {
       const stream=await navigator.mediaDevices.getUserMedia({audio:true});
@@ -308,7 +308,7 @@ function ScreenWelcome({ onAnalyze }) {
   };
   const stopRec=()=>{ mediaRef.current?.stop(); setRecording(false); };
 
-  // ── Анализировать ──
+  // --- Анализировать --
   const analyze=async()=>{
     setLoading(true);
     try {
@@ -354,7 +354,7 @@ function ScreenWelcome({ onAnalyze }) {
           ))}
         </div>
 
-        {/* ── СКРИНШОТЫ ── */}
+        {/* -- СКРИНШОТЫ -- */}
         {mode==="image"&&(
           <div style={{background:"#0d0d1a",border:"1px solid #00ffcc22",borderRadius:16,padding:16}}>
             {/* Превью добавленных */}
@@ -383,13 +383,13 @@ function ScreenWelcome({ onAnalyze }) {
           </div>
         )}
 
-        {/* ── ТЕКСТ ── */}
+        {/* -- ТЕКСТ -- */}
         {mode==="text"&&(
           <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Вставь текст переписки сюда..."
             style={{width:"100%",minHeight:140,background:"#0d0d1a",border:"1px solid #00ffcc33",borderRadius:12,padding:"14px",fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#ccc",resize:"vertical",outline:"none",boxSizing:"border-box",lineHeight:1.5}}/>
         )}
 
-        {/* ── ГОЛОСОВЫЕ ── */}
+        {/* -- ГОЛОСОВЫЕ -- */}
         {mode==="voice"&&(
           <div style={{background:"#0d0d1a",border:"1px solid #00ffcc22",borderRadius:16,padding:16}}>
             {/* Превью добавленных */}
@@ -422,7 +422,7 @@ function ScreenWelcome({ onAnalyze }) {
           </div>
         )}
 
-        {/* ── Кнопка анализа ── */}
+        {/* -- Кнопка анализа -- */}
         <button onClick={analyze} disabled={!canAnalyze||loading}
           style={{width:"100%",marginTop:14,
             background:canAnalyze?"linear-gradient(135deg,#00ffcc,#00cc99)":"#111",
@@ -439,7 +439,7 @@ function ScreenWelcome({ onAnalyze }) {
   );
 }
 
-// ─── Screen 2: Scanning ───────────────────────────────────────────────────────
+// --- Screen 2: Scanning -------------------------------------------------------
 const STEPS=["Обрабатываем входящие данные...","Изучаем синтаксис и тональность...","Ищем скрытый газлайтинг...","Сопоставляем с базой психотипов...","Выявляем манипулятивные паттерны...","Формируем психологический профиль..."];
 
 function ScreenScanning({ isVoice }) {
@@ -467,7 +467,7 @@ function ScreenScanning({ isVoice }) {
   );
 }
 
-// ─── Screen 3: Result ─────────────────────────────────────────────────────────
+// --- Screen 3: Result ---------------------------------------------------------
 function ScreenResult({ data, onReset }) {
   const [unlocked,setUnlocked]=useState(false);
   const [showResp,setShowResp]=useState(false);
@@ -536,7 +536,7 @@ function ScreenResult({ data, onReset }) {
   );
 }
 
-// ─── 🆕 Error screen с поддержкой ────────────────────────────────────────────
+// --- 🆕 Error screen с поддержкой --------------------------------------------
 function ScreenError({ message, onReset }) {
   const isApiError = message?.includes("DOCTYPE") || message?.includes("404") || message?.includes("API");
   return (
@@ -565,7 +565,7 @@ function ScreenError({ message, onReset }) {
   );
 }
 
-// ─── ROOT ─────────────────────────────────────────────────────────────────────
+// --- ROOT ---------------------------------------------------------------------
 function safeGet(key){try{return localStorage.getItem(key);}catch(e){return null;}}
 function safeSet(key,val){try{localStorage.setItem(key,val);}catch(e){}}
 
