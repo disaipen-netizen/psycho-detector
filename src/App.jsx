@@ -261,24 +261,37 @@ function SupportButton() {
 
 // ─── Screen 1: Welcome ────────────────────────────────────────────────────────
 function ScreenWelcome({ onAnalyze }) {
-  const [hover,setHover]=useState(false);
-  const [mode,setMode]=useState("image"); // image | text | voice
+  const [mode,setMode]=useState("image");
   const [text,setText]=useState("");
   const [pulse,setPulse]=useState(false);
   const [loading,setLoading]=useState(false);
   const [recording,setRecording]=useState(false);
-  const [audioBlob,setAudioBlob]=useState(null);
-  const [audioURL,setAudioURL]=useState(null);
-  const fileRef=useRef();
-  const audioRef=useRef();
-  const mediaRef=useRef();
+  const [images,setImages]=useState([]); // массив {file, url}
+  const [audios,setAudios]=useState([]); // массив {file, url}
+  const imgRef=useRef(); const audRef=useRef(); const mediaRef=useRef();
 
   useEffect(()=>{ const id=setInterval(()=>setPulse(p=>!p),1800); return()=>clearInterval(id); },[]);
 
-  const handleFile=async e=>{ const file=e.target.files[0]; if(!file)return; setLoading(true); const b64=await toBase64(file); onAnalyze({image:b64}); };
+  // ── Добавить скриншоты (до 10) ──
+  const handleImages=e=>{
+    const files=Array.from(e.target.files);
+    const items=files.map(f=>({file:f,url:URL.createObjectURL(f)}));
+    setImages(prev=>[...prev,...items].slice(0,10));
+    e.target.value="";
+  };
+  const removeImage=i=>setImages(prev=>prev.filter((_,idx)=>idx!==i));
 
-  // 🆕 Голосовая запись
-  const startRecording=async()=>{
+  // ── Добавить аудио (до 5) ──
+  const handleAudios=e=>{
+    const files=Array.from(e.target.files);
+    const items=files.map(f=>({file:f,url:URL.createObjectURL(f)}));
+    setAudios(prev=>[...prev,...items].slice(0,5));
+    e.target.value="";
+  };
+  const removeAudio=i=>setAudios(prev=>prev.filter((_,idx)=>idx!==i));
+
+  // ── Запись голоса ──
+  const startRec=async()=>{
     try {
       const stream=await navigator.mediaDevices.getUserMedia({audio:true});
       const mr=new MediaRecorder(stream); mediaRef.current=mr;
@@ -286,47 +299,54 @@ function ScreenWelcome({ onAnalyze }) {
       mr.ondataavailable=e=>chunks.push(e.data);
       mr.onstop=()=>{
         const blob=new Blob(chunks,{type:"audio/webm"});
-        setAudioBlob(blob); setAudioURL(URL.createObjectURL(blob));
+        const file=new File([blob],`voice_${Date.now()}.webm`,{type:"audio/webm"});
+        setAudios(prev=>[...prev,{file,url:URL.createObjectURL(blob)}].slice(0,5));
         stream.getTracks().forEach(t=>t.stop());
       };
       mr.start(); setRecording(true);
     } catch(e){ alert("Нет доступа к микрофону"); }
   };
+  const stopRec=()=>{ mediaRef.current?.stop(); setRecording(false); };
 
-  const stopRecording=()=>{ mediaRef.current?.stop(); setRecording(false); };
-
-  const handleVoiceFile=async e=>{ const file=e.target.files[0]; if(!file)return; setAudioBlob(file); setAudioURL(URL.createObjectURL(file)); };
-
-  const analyzeVoice=async()=>{
-    if(!audioBlob) return; setLoading(true);
-    const b64=await toBase64(audioBlob);
-    onAnalyze({audio:b64, audioType: audioBlob.type||"audio/webm"});
+  // ── Анализировать ──
+  const analyze=async()=>{
+    setLoading(true);
+    try {
+      if(mode==="image"&&images.length>0){
+        const b64s=await Promise.all(images.map(i=>toBase64(i.file)));
+        const types=images.map(i=>i.file.type||"image/jpeg");
+        onAnalyze({images:b64s,imageTypes:types});
+      } else if(mode==="voice"&&audios.length>0){
+        const b64s=await Promise.all(audios.map(a=>toBase64(a.file)));
+        const types=audios.map(a=>a.file.type||"audio/webm");
+        onAnalyze({audios:b64s,audioTypes:types});
+      } else if(mode==="text"&&text.trim().length>=20){
+        onAnalyze({text});
+      }
+    } catch(e){ setLoading(false); }
   };
 
-  const MODES=[
-    {id:"image", icon:"📸", label:"Скриншот"},
-    {id:"text",  icon:"✏️", label:"Текст"},
-    {id:"voice", icon:"🎤", label:"Голосовое"},
-  ];
+  const canAnalyze=(mode==="image"&&images.length>0)||(mode==="voice"&&audios.length>0)||(mode==="text"&&text.length>=20);
+  const MODES=[{id:"image",icon:"📸",label:"Скриншоты"},{id:"text",icon:"✏️",label:"Текст"},{id:"voice",icon:"🎤",label:"Голосовые"}];
 
   return (
-    <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"48px 24px 80px",position:"relative"}}>
+    <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"40px 20px 100px",position:"relative"}}>
       <div style={{position:"fixed",inset:0,zIndex:0,opacity:.05,backgroundImage:"linear-gradient(#00ffcc 1px,transparent 1px),linear-gradient(90deg,#00ffcc 1px,transparent 1px)",backgroundSize:"40px 40px"}}/>
 
       {/* Eye */}
-      <div style={{width:90,height:90,borderRadius:"50%",position:"relative",background:"radial-gradient(circle at 40% 40%,#0d1f2d,#050510)",border:"1.5px solid #00ffcc44",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:20,zIndex:1,boxShadow:pulse?"0 0 40px #00ffcc55":"0 0 20px #00ffcc22",transition:"box-shadow 1.8s ease"}}>
+      <div style={{width:88,height:88,borderRadius:"50%",position:"relative",background:"radial-gradient(circle at 40% 40%,#0d1f2d,#050510)",border:"1.5px solid #00ffcc44",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:20,zIndex:1,boxShadow:pulse?"0 0 40px #00ffcc55":"0 0 20px #00ffcc22",transition:"box-shadow 1.8s ease"}}>
         <svg width={46} height={28} viewBox="0 0 52 32"><ellipse cx={26} cy={16} rx={25} ry={15} fill="none" stroke="#00ffcc" strokeWidth={1.5}/><circle cx={26} cy={16} r={8} fill="#00ffcc22" stroke="#00ffcc" strokeWidth={1.5}/><circle cx={26} cy={16} r={3.5} fill="#00ffcc"/><circle cx={28} cy={14} r={1.2} fill="#fff" opacity={.7}/></svg>
         <ScanLine/>
       </div>
 
-      <div style={{textAlign:"center",zIndex:1,maxWidth:360,width:"100%"}}>
+      <div style={{textAlign:"center",zIndex:1,maxWidth:380,width:"100%"}}>
         <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:5,color:"#00ffcc88",marginBottom:14}}>PSYCHO DETECTOR v2.1</p>
         <LiveCounter/>
-        <h1 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:40,lineHeight:1.05,margin:"0 0 12px",color:"#fff",letterSpacing:-1}}>Кто он<br/><span style={{color:"#00ffcc"}}>на самом</span><br/>деле?</h1>
-        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#666",lineHeight:1.5,margin:"0 0 24px"}}>Загрузи скриншот, текст или голосовое — нейросеть раскроет психотип и манипуляции</p>
+        <h1 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:38,lineHeight:1.05,margin:"0 0 12px",color:"#fff",letterSpacing:-1}}>Кто он<br/><span style={{color:"#00ffcc"}}>на самом</span><br/>деле?</h1>
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#666",lineHeight:1.5,margin:"0 0 20px"}}>До 10 скриншотов или 5 голосовых — нейросеть проанализирует всю переписку</p>
 
-        {/* Mode toggle — 3 вкладки */}
-        <div style={{display:"flex",gap:4,marginBottom:20,background:"#111118",border:"1px solid #222",borderRadius:20,padding:"4px"}}>
+        {/* Tabs */}
+        <div style={{display:"flex",gap:4,marginBottom:16,background:"#111118",border:"1px solid #222",borderRadius:20,padding:"4px"}}>
           {MODES.map(m=>(
             <button key={m.id} onClick={()=>setMode(m.id)} style={{flex:1,background:mode===m.id?"#00ffcc":"transparent",color:mode===m.id?"#000":"#555",border:"none",borderRadius:14,padding:"7px 0",fontFamily:"'Share Tech Mono',monospace",fontSize:10,cursor:"pointer",fontWeight:mode===m.id?700:400,transition:"all .2s"}}>
               {m.icon} {m.label}
@@ -334,67 +354,86 @@ function ScreenWelcome({ onAnalyze }) {
           ))}
         </div>
 
-        {/* ── Скриншот ── */}
+        {/* ── СКРИНШОТЫ ── */}
         {mode==="image"&&(
-          <><input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleFile}/>
-          <div onClick={()=>!loading&&fileRef.current.click()} onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
-            style={{border:`2px dashed ${hover?"#00ffcc":"#00ffcc44"}`,borderRadius:16,padding:"32px 24px",cursor:loading?"wait":"pointer",background:hover?"#00ffcc08":"transparent",transition:"all .3s",position:"relative",overflow:"hidden"}}>
-            <div style={{fontSize:32,marginBottom:8}}>{loading?"⏳":"⬆"}</div>
-            <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:17,color:hover?"#00ffcc":"#fff",transition:"color .3s"}}>{loading?"Загружаем...":"Загрузить скриншот"}</div>
-            <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#444",marginTop:4}}>JPG, PNG — из галереи</div>
-            {hover&&<ScanLine/>}
-          </div></>
-        )}
-
-        {/* ── Текст ── */}
-        {mode==="text"&&(
-          <><textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Вставь текст переписки сюда..."
-            style={{width:"100%",minHeight:130,background:"#0d0d1a",border:"1px solid #00ffcc33",borderRadius:12,padding:"14px",fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#ccc",resize:"vertical",outline:"none",boxSizing:"border-box",lineHeight:1.5}}/>
-          <button onClick={()=>text.trim().length>=20&&onAnalyze({text})} disabled={text.length<20}
-            style={{width:"100%",marginTop:10,background:text.length>=20?"linear-gradient(135deg,#00ffcc22,#00ffcc11)":"#111",border:`1px solid ${text.length>=20?"#00ffcc66":"#222"}`,borderRadius:10,padding:"13px",cursor:text.length>=20?"pointer":"not-allowed",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:text.length>=20?"#00ffcc":"#333",transition:"all .3s"}}>
-            🔍 Анализировать
-          </button></>
-        )}
-
-        {/* ── 🆕 Голосовое ── */}
-        {mode==="voice"&&(
-          <div style={{background:"#0d0d1a",border:"1px solid #00ffcc22",borderRadius:16,padding:20}}>
-            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#444",letterSpacing:2,margin:"0 0 16px"}}>ЗАПИШИ ИЛИ ЗАГРУЗИ ГОЛОСОВОЕ</p>
-
-            {/* Кнопка записи */}
-            <button onClick={recording?stopRecording:startRecording}
-              style={{width:"100%",background:recording?"linear-gradient(135deg,#ff2d78,#cc0055)":"linear-gradient(135deg,#00ffcc22,#00ffcc11)",border:`1px solid ${recording?"#ff2d78":"#00ffcc44"}`,borderRadius:12,padding:"18px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:17,color:recording?"#fff":"#00ffcc",cursor:"pointer",marginBottom:12,letterSpacing:1,transition:"all .3s",animation:recording?"recpulse 1s ease infinite":"none"}}>
-              {recording?"⏹ Остановить запись":"🎤 Начать запись"}
-            </button>
-            <style>{`@keyframes recpulse{0%,100%{box-shadow:0 0 0 0 #ff2d7855}50%{box-shadow:0 0 0 12px transparent}}`}</style>
-
-            {/* Или загрузить файл */}
-            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#333",margin:"0 0 10px",textAlign:"center"}}>— или —</p>
-            <input ref={audioRef} type="file" accept="audio/*" style={{display:"none"}} onChange={handleVoiceFile}/>
-            <button onClick={()=>audioRef.current.click()} style={{width:"100%",background:"transparent",border:"1px dashed #333",borderRadius:10,padding:"12px",fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#555",cursor:"pointer",marginBottom:16}}>
-              📁 Загрузить аудио файл
-            </button>
-
-            {/* Превью записи */}
-            {audioURL&&(
-              <div style={{marginBottom:16}}>
-                <audio controls src={audioURL} style={{width:"100%",borderRadius:8}}/>
-                <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#00ffcc88",textAlign:"center",marginTop:8}}>✓ Аудио готово к анализу</p>
+          <div style={{background:"#0d0d1a",border:"1px solid #00ffcc22",borderRadius:16,padding:16}}>
+            {/* Превью добавленных */}
+            {images.length>0&&(
+              <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:12}}>
+                {images.map((img,i)=>(
+                  <div key={i} style={{position:"relative",width:72,height:72,borderRadius:8,overflow:"hidden",border:"1px solid #00ffcc33"}}>
+                    <img src={img.url} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                    <button onClick={()=>removeImage(i)} style={{position:"absolute",top:2,right:2,width:18,height:18,borderRadius:"50%",background:"#ff2d78",border:"none",color:"#fff",fontSize:11,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",lineHeight:1}}>✕</button>
+                  </div>
+                ))}
               </div>
             )}
-
-            <button onClick={analyzeVoice} disabled={!audioBlob||loading}
-              style={{width:"100%",background:audioBlob?"linear-gradient(135deg,#00ffcc22,#00ffcc11)":"#111",border:`1px solid ${audioBlob?"#00ffcc66":"#222"}`,borderRadius:10,padding:"13px",cursor:audioBlob?"pointer":"not-allowed",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:audioBlob?"#00ffcc":"#333",transition:"all .3s"}}>
-              {loading?"Анализируем...":"🔍 Анализировать голосовое"}
-            </button>
-
-            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#2a2a3a",marginTop:12,lineHeight:1.6}}>
-              Поддерживаются MP3, OGG, M4A, WebM.<br/>Whisper AI расшифрует и проанализирует.
-            </p>
+            <input ref={imgRef} type="file" accept="image/*" multiple style={{display:"none"}} onChange={handleImages}/>
+            <div onClick={()=>imgRef.current.click()} style={{border:"2px dashed #00ffcc33",borderRadius:12,padding:"20px",cursor:"pointer",textAlign:"center",transition:"all .3s"}}
+              onTouchStart={e=>e.currentTarget.style.borderColor="#00ffcc"}
+              onTouchEnd={e=>e.currentTarget.style.borderColor="#00ffcc33"}>
+              <div style={{fontSize:28,marginBottom:6}}>⬆</div>
+              <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#fff"}}>
+                {images.length>0?`Добавить ещё (${images.length}/10)`:"Выбрать скриншоты"}
+              </div>
+              <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#444",marginTop:4}}>
+                Можно выбрать несколько сразу
+              </div>
+            </div>
           </div>
         )}
 
-        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#2a2a3a",marginTop:16}}>ПЕРВЫЙ АНАЛИЗ БЕСПЛАТНО · ДАННЫЕ НЕ СОХРАНЯЮТСЯ</p>
+        {/* ── ТЕКСТ ── */}
+        {mode==="text"&&(
+          <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Вставь текст переписки сюда..."
+            style={{width:"100%",minHeight:140,background:"#0d0d1a",border:"1px solid #00ffcc33",borderRadius:12,padding:"14px",fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#ccc",resize:"vertical",outline:"none",boxSizing:"border-box",lineHeight:1.5}}/>
+        )}
+
+        {/* ── ГОЛОСОВЫЕ ── */}
+        {mode==="voice"&&(
+          <div style={{background:"#0d0d1a",border:"1px solid #00ffcc22",borderRadius:16,padding:16}}>
+            {/* Превью добавленных */}
+            {audios.length>0&&(
+              <div style={{marginBottom:12}}>
+                {audios.map((a,i)=>(
+                  <div key={i} style={{display:"flex",alignItems:"center",gap:10,background:"#111",borderRadius:10,padding:"8px 12px",marginBottom:8}}>
+                    <span style={{fontSize:20}}>🎤</span>
+                    <div style={{flex:1,fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#00ffcc88",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                      {a.file.name||`Запись ${i+1}`}
+                    </div>
+                    <button onClick={()=>removeAudio(i)} style={{background:"#ff2d7833",border:"1px solid #ff2d7855",borderRadius:6,color:"#ff2d78",fontSize:11,cursor:"pointer",padding:"2px 8px"}}>✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Запись */}
+            <button onClick={recording?stopRec:startRec} style={{width:"100%",background:recording?"linear-gradient(135deg,#ff2d78,#cc0055)":"linear-gradient(135deg,#00ffcc22,#00ffcc11)",border:`1px solid ${recording?"#ff2d78":"#00ffcc44"}`,borderRadius:12,padding:"16px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:recording?"#fff":"#00ffcc",cursor:"pointer",marginBottom:10,letterSpacing:1,transition:"all .3s",animation:recording?"recpulse 1s ease infinite":"none"}}>
+              {recording?"⏹ Остановить запись":"🎤 Записать голосовое"}
+            </button>
+            <style>{`@keyframes recpulse{0%,100%{box-shadow:0 0 0 0 #ff2d7855}50%{box-shadow:0 0 0 12px transparent}}`}</style>
+
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#333",margin:"0 0 10px",textAlign:"center"}}>— или загрузи файлы —</p>
+            <input ref={audRef} type="file" accept="audio/*" multiple style={{display:"none"}} onChange={handleAudios}/>
+            <button onClick={()=>audRef.current.click()} style={{width:"100%",background:"transparent",border:"1px dashed #333",borderRadius:10,padding:"12px",fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#555",cursor:"pointer"}}>
+              📁 Загрузить аудио ({audios.length}/5)
+            </button>
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#2a2a3a",marginTop:10,lineHeight:1.6,textAlign:"center"}}>MP3, OGG, M4A, WebM</p>
+          </div>
+        )}
+
+        {/* ── Кнопка анализа ── */}
+        <button onClick={analyze} disabled={!canAnalyze||loading}
+          style={{width:"100%",marginTop:14,
+            background:canAnalyze?"linear-gradient(135deg,#00ffcc,#00cc99)":"#111",
+            border:`1px solid ${canAnalyze?"#00ffcc":"#222"}`,
+            borderRadius:12,padding:"15px",cursor:canAnalyze?"pointer":"not-allowed",
+            fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:17,
+            color:canAnalyze?"#000":"#333",transition:"all .3s",letterSpacing:1}}>
+          {loading?"⏳ Анализируем...":canAnalyze?"🔍 Анализировать":"Выбери файлы или введи текст"}
+        </button>
+
+        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#2a2a3a",marginTop:14}}>ПЕРВЫЙ АНАЛИЗ БЕСПЛАТНО · ДАННЫЕ НЕ СОХРАНЯЮТСЯ</p>
       </div>
     </div>
   );
