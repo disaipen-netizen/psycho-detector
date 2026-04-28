@@ -8,7 +8,32 @@ function ScanLine() {
   return (<><div style={{position:"absolute",left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#00ffcc55,transparent)",animation:"scan 2.6s linear infinite",pointerEvents:"none",zIndex:10}}/><style>{`@keyframes scan{0%{top:-4px}100%{top:110%}}`}</style></>);
 }
 function toBase64(file) {
-  return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(",")[1]); r.onerror=rej; r.readAsDataURL(file); });
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>{
+      // Для изображений — сжимаем через canvas
+      if(file.type.startsWith("image/")) {
+        const img=new Image();
+        img.onload=()=>{
+          const canvas=document.createElement("canvas");
+          // Максимум 1200px по длинной стороне
+          const MAX=1200;
+          let w=img.width, h=img.height;
+          if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+          canvas.width=w; canvas.height=h;
+          const ctx=canvas.getContext("2d");
+          ctx.drawImage(img,0,0,w,h);
+          const compressed=canvas.toDataURL("image/jpeg",0.7);
+          res(compressed.split(",")[1]);
+        };
+        img.src=r.result;
+      } else {
+        res(r.result.split(",")[1]);
+      }
+    };
+    r.onerror=rej;
+    r.readAsDataURL(file);
+  });
 }
 
 // --- Живой счётчик ------------------------------------------------------------
