@@ -89,6 +89,7 @@ export default async function handler(req, res) {
         model: "gpt-4o-mini",
         max_tokens: 1500,
         temperature: 0.4,
+        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userContent },
