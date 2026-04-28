@@ -1,24 +1,18 @@
-// api/analyze.js — Vercel Serverless Function
-// Поддерживает: текст, скриншот (GPT-4o Vision), голосовое (Whisper → GPT-4o)
-
+// api/analyze.js — поддержка текста, одного/нескольких скриншотов, голосовых
 import { Buffer } from "buffer";
 
-const SYSTEM_PROMPT = `Ты — экспертный психоаналитический детектор коммуникаций. Проведи глубокий анализ переписки или расшифровки голосового сообщения.
+const SYSTEM_PROMPT = `Ты — экспертный психоаналитический детектор коммуникаций. Проанализируй переписку и выяви психологические паттерны и манипуляции.
 
-Верни ответ СТРОГО в формате JSON без markdown и пояснений вне JSON:
+Верни ответ СТРОГО в формате JSON без markdown:
 
 {
   "name": "имя собеседника или Собеседник",
   "toxicity": 75,
-  "psychotype": {
-    "name": "Холодный Нарцисс",
-    "icon": "🪞",
-    "description": "Описание 1-2 предложения"
-  },
+  "psychotype": { "name": "Холодный Нарцисс", "icon": "🪞", "description": "1-2 предложения" },
   "manipulation_techniques": ["Газлайтинг", "Обесценивание"],
   "evidence": [
     { "quote": "цитата", "label": "Газлайтинг", "explanation": "объяснение" },
-    { "quote": "цитата", "label": "Изоляция",   "explanation": "объяснение" }
+    { "quote": "цитата", "label": "Изоляция", "explanation": "объяснение" }
   ],
   "dark_traits": { "manipulation": 9, "empathy": 2, "dominance": 8 },
   "boundary_violation": "Как нарушает границы",
@@ -37,51 +31,77 @@ export default async function handler(req, res) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return res.status(500).json({ error: "OPENAI_API_KEY не задан в Vercel Environment Variables" });
 
-  const { text, image, audio, audioType } = req.body || {};
-  if (!text && !image && !audio) return res.status(400).json({ error: "Нужен text, image или audio" });
+  // Поддерживаем оба формата: один файл и массив файлов
+  let { text, image, images, imageTypes, audio, audios, audioTypes } = req.body || {};
+
+  // Нормализуем — приводим к массивам
+  if (image && !images) { images = [image]; imageTypes = ["image/jpeg"]; }
+  if (audio && !audios) { audios = [audio]; audioTypes = [audioTypes || "audio/webm"]; }
+
+  const hasImages = images?.length > 0;
+  const hasAudios = audios?.length > 0;
+  const hasText   = text?.trim?.().length > 0;
+
+  if (!hasImages && !hasAudios && !hasText)
+    return res.status(400).json({ error: "Нужен text, image(s) или audio(s)" });
 
   try {
     let analysisText = text || null;
 
-    // ── 1. Голосовое → Whisper расшифровка ──────────────────────────────────
-    if (audio) {
-      const audioBuffer = Buffer.from(audio, "base64");
-      const formData = new FormData();
-      const mimeType = audioType || "audio/webm";
-      const ext = mimeType.includes("mp3") ? "mp3" : mimeType.includes("ogg") ? "ogg" : mimeType.includes("m4a") ? "m4a" : "webm";
-      const blob = new Blob([audioBuffer], { type: mimeType });
-      formData.append("file", blob, `audio.${ext}`);
-      formData.append("model", "whisper-1");
-      formData.append("language", "ru");
-      formData.append("response_format", "text");
-
-      const whisperRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${apiKey}` },
-        body: formData,
-      });
-
-      if (!whisperRes.ok) {
-        const err = await whisperRes.json();
-        return res.status(500).json({ error: "Ошибка расшифровки голосового: " + (err.error?.message || "unknown") });
-      }
-
-      analysisText = await whisperRes.text();
-      if (!analysisText?.trim()) return res.status(400).json({ error: "Не удалось расшифровать аудио. Попробуй с более чётким звуком." });
-      analysisText = `[Расшифровка голосового сообщения]\n\n${analysisText}`;
+    // ── 1. Голосовые → Whisper (параллельно) ────────────────────────────────
+    if (hasAudios) {
+      const transcriptions = await Promise.all(
+        audios.map(async (b64, i) => {
+          const mimeType = audioTypes?.[i] || "audio/webm";
+          const ext = mimeType.includes("mp3")?"mp3":mimeType.includes("ogg")?"ogg":mimeType.includes("m4a")?"m4a":"webm";
+          const buf = Buffer.from(b64, "base64");
+          const blob = new Blob([buf], { type: mimeType });
+          const form = new FormData();
+          form.append("file", blob, `audio_${i}.${ext}`);
+          form.append("model", "whisper-1");
+          form.append("language", "ru");
+          form.append("response_format", "text");
+          const r = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${apiKey}` },
+            body: form,
+          });
+          if (!r.ok) throw new Error("Whisper error on file " + i);
+          return await r.text();
+        })
+      );
+      analysisText = transcriptions
+        .map((t, i) => audios.length > 1 ? `[Голосовое ${i+1}]\n${t}` : t)
+        .join("\n\n");
     }
 
-    // ── 2. gpt-4o-mini анализ ─────────────────────────────────────────────────────
+    // ── 2. Строим user message для GPT-4o ───────────────────────────────────
     let userContent;
-    if (image) {
+
+    if (hasImages) {
       userContent = [
-        { type: "image_url", image_url: { url: `data:image/jpeg;base64,${image}`, detail: "high" } },
-        { type: "text", text: "Прочитай переписку на скриншоте и проведи полный психологический анализ согласно инструкции." },
+        ...images.map((b64, i) => ({
+          type: "image_url",
+          image_url: {
+            url: `data:${imageTypes?.[i] || "image/jpeg"};base64,${b64}`,
+            detail: "high",
+          },
+        })),
+        {
+          type: "text",
+          text: images.length > 1
+            ? `Это ${images.length} скриншотов одной переписки. Прочитай весь текст, объедини хронологически и проведи полный психологический анализ.`
+            : "Прочитай переписку на скриншоте и проведи полный психологический анализ.",
+        },
       ];
     } else {
-      userContent = `Проведи полный психологический анализ:\n\n${analysisText}`;
+      const prefix = hasAudios && audios.length > 1
+        ? `Это расшифровка ${audios.length} голосовых сообщений. Проведи полный психологический анализ:`
+        : "Проведи полный психологический анализ переписки:";
+      userContent = `${prefix}\n\n${analysisText}`;
     }
 
+    // ── 3. GPT-4o анализ ─────────────────────────────────────────────────────
     const gptRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
@@ -102,16 +122,11 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: err.error?.message || "Ошибка OpenAI" });
     }
 
-    const gptData = await gptRes.json();
-    const raw = gptData.choices[0].message.content;
-    const clean = raw.replace(/```json|```/g, "").trim();
-    const result = JSON.parse(clean);
-
-    // Если было голосовое — добавляем расшифровку в ответ
-    if (audio && analysisText) result.transcription = analysisText;
+    const raw = (await gptRes.json()).choices[0].message.content;
+    const result = JSON.parse(raw.replace(/```json|```/g, "").trim());
+    if (analysisText && hasAudios) result.transcription = analysisText;
 
     return res.status(200).json(result);
-
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "Ошибка сервера: " + e.message });
