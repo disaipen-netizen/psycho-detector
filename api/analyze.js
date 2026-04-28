@@ -71,7 +71,7 @@ export default async function handler(req, res) {
       analysisText = `[Расшифровка голосового сообщения]\n\n${analysisText}`;
     }
 
-    // ── 2. GPT-4o анализ ─────────────────────────────────────────────────────
+    // ── 2. gpt-4o-mini анализ ─────────────────────────────────────────────────────
     let userContent;
     if (image) {
       userContent = [
