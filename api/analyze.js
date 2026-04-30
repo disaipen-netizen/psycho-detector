@@ -126,6 +126,16 @@ export default async function handler(req, res) {
     const result = JSON.parse(raw.replace(/```json|```/g, "").trim());
     if (analysisText && hasAudios) result.transcription = analysisText;
 
+    // Считаем реальный запрос
+    try {
+      const origin = req.headers.origin || "https://psycho-detector-ye1y.vercel.app";
+      fetch(`${origin}/api/counter`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: req.headers["x-forwarded-for"] || "anon" })
+      }).catch(()=>{});
+    } catch(e) {}
+
     return res.status(200).json(result);
   } catch (e) {
     console.error(e);
