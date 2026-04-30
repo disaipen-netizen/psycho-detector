@@ -691,8 +691,7 @@ function ScreenResult({ data, onReset }) {
         <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#fff",margin:"0 0 6px"}}>А как выглядишь ты?</p>
         <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#555",margin:"0 0 14px",lineHeight:1.5}}>Дай другу проанализировать твои сообщения — узнай свой психотип</p>
         <button onClick={()=>{
-          const text="Привет! Проверь мои сообщения — узнай мой психотип 👁
-t.me/psychodetector_bot/PsychoDetector";
+          const text="Привет! Проверь мои сообщения - узнай мой психотип 👁\nt.me/psychodetector_bot/PsychoDetector";
           if(navigator.share){navigator.share({text});}
           else{navigator.clipboard.writeText(text);}
         }} style={{background:"linear-gradient(135deg,#1a1a2e,#0d0d1a)",border:"1px solid #ffffff22",borderRadius:10,padding:"10px 24px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:14,color:"#888",cursor:"pointer"}}>
