@@ -291,7 +291,7 @@ function SupportButton() {
 }
 
 // --- Screen 1: Welcome --------------------------------------------------------
-function ScreenWelcome({ onAnalyze }) {
+function ScreenWelcome({ onAnalyze, onRedFlags }) {
   const [mode,setMode]=useState("image");
   const [text,setText]=useState("");
   const [pulse,setPulse]=useState(false);
@@ -464,6 +464,11 @@ function ScreenWelcome({ onAnalyze }) {
           {loading?"⏳ Анализируем...":canAnalyze?"🔍 Анализировать":"Выбери файлы или введи текст"}
         </button>
 
+        {/* Красные флаги */}
+        <button onClick={()=>onRedFlags()} style={{width:"100%",marginTop:10,background:"transparent",border:"1px solid #ff2d7833",borderRadius:12,padding:"12px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#ff2d78aa",cursor:"pointer",letterSpacing:.5}}>
+          🚩 Проверить одно сообщение на красные флаги
+        </button>
+
         <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#2a2a3a",marginTop:14}}>ПЕРВЫЙ АНАЛИЗ БЕСПЛАТНО · ДАННЫЕ НЕ СОХРАНЯЮТСЯ</p>
       </div>
     </div>
@@ -493,6 +498,122 @@ function ScreenScanning({ isVoice }) {
       <div style={{width:"100%",maxWidth:320,marginTop:24}}>
         <div style={{height:3,background:"#111",borderRadius:2,overflow:"hidden"}}><div style={{height:"100%",width:`${progress}%`,background:"linear-gradient(90deg,#00ffcc,#ff2d78)",borderRadius:2,transition:"width .1s linear",boxShadow:"0 0 10px #00ffcc"}}/></div>
         <div style={{textAlign:"right",marginTop:6,fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#333"}}>{Math.round(progress)}%</div>
+      </div>
+    </div>
+  );
+}
+
+// --- 🆕 Советы психолога блок ------------------------------------------------
+function AdviceBlock({ advice }) {
+  const [open,setOpen]=useState(false);
+  if(!advice) return null;
+  return (
+    <div style={{background:"linear-gradient(135deg,#0d1f2d,#0a1a0d)",border:"1px solid #00ffcc33",borderRadius:16,padding:"20px",marginBottom:14}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer"}} onClick={()=>setOpen(o=>!o)}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <span style={{fontSize:24}}>🧘</span>
+          <div>
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,letterSpacing:3,color:"#00ffcc88",margin:"0 0 2px"}}>СОВЕТ ПСИХОЛОГА</p>
+            <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#fff",margin:0}}>{advice.title||"Как вести себя с этим типом"}</p>
+          </div>
+        </div>
+        <span style={{color:"#00ffcc",fontSize:18,transition:"transform .3s",transform:open?"rotate(180deg)":"rotate(0deg)"}}>▾</span>
+      </div>
+      {open&&(
+        <div style={{marginTop:16}}>
+          <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#ccc",lineHeight:1.6,margin:"0 0 14px",borderLeft:"3px solid #00ffcc",paddingLeft:12}}>
+            {advice.short}
+          </p>
+          {advice.tactics?.length>0&&(
+            <div style={{marginBottom:14}}>
+              <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#00ffcc88",letterSpacing:2,marginBottom:8}}>ЧТО ДЕЛАТЬ:</p>
+              {advice.tactics.map((t,i)=>(
+                <div key={i} style={{display:"flex",gap:10,marginBottom:8}}>
+                  <span style={{color:"#00ffcc",fontFamily:"'Share Tech Mono',monospace",fontSize:12,marginTop:2}}>0{i+1}</span>
+                  <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#aaa",margin:0,lineHeight:1.5}}>{t}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          {advice.warning&&(
+            <div style={{background:"#ff2d7810",border:"1px solid #ff2d7833",borderRadius:10,padding:"10px 14px"}}>
+              <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#ff2d78",letterSpacing:2,margin:"0 0 4px"}}>ЧЕГО НЕ ДЕЛАТЬ:</p>
+              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#ff2d78aa",margin:0,lineHeight:1.5}}>⛔ {advice.warning}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// --- 🆕 Красные флаги модалка ------------------------------------------------
+function RedFlagsModal({ onClose, onAnalyze }) {
+  const [msg,setMsg]=useState("");
+  const [result,setResult]=useState(null);
+  const [loading,setLoading]=useState(false);
+
+  const check=async()=>{
+    if(msg.trim().length<5) return;
+    setLoading(true);
+    try {
+      const res=await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({text:`Проверь одно сообщение на красные флаги и манипуляции: "${msg}"`,redFlagsMode:true})});
+      const data=await res.json();
+      setResult(data);
+    } catch(e){}
+    setLoading(false);
+  };
+
+  return (
+    <div style={{position:"fixed",inset:0,background:"#000000dd",zIndex:100,display:"flex",alignItems:"flex-end",justifyContent:"center",padding:20}}>
+      <div style={{background:"#0d0d1a",border:"1px solid #ff2d7833",borderRadius:16,padding:24,width:"100%",maxWidth:440,maxHeight:"80vh",overflowY:"auto"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+          <div>
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#ff2d78",letterSpacing:3,margin:"0 0 4px"}}>ДЕТЕКТОР</p>
+            <span style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:20,color:"#fff"}}>🚩 Красные флаги</span>
+          </div>
+          <button onClick={onClose} style={{background:"none",border:"none",color:"#444",fontSize:22,cursor:"pointer"}}>✕</button>
+        </div>
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#666",marginBottom:16,lineHeight:1.5}}>
+          Вставь одно сообщение — проверим есть ли тревожные признаки
+        </p>
+        <textarea value={msg} onChange={e=>setMsg(e.target.value)}
+          placeholder="Вставь сообщение здесь..."
+          style={{width:"100%",minHeight:100,background:"#111",border:"1px solid #ff2d7833",borderRadius:10,padding:"12px",
+            fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#ccc",resize:"none",outline:"none",boxSizing:"border-box",marginBottom:12}}/>
+        {!result?(
+          <button onClick={check} disabled={msg.length<5||loading} style={{width:"100%",
+            background:msg.length>=5?"linear-gradient(135deg,#ff2d78,#ff6b35)":"#111",
+            border:"none",borderRadius:10,padding:"13px",fontFamily:"'Rajdhani',sans-serif",
+            fontWeight:700,fontSize:16,color:msg.length>=5?"#fff":"#333",cursor:msg.length>=5?"pointer":"not-allowed"}}>
+            {loading?"Проверяем...":"🚩 Проверить"}
+          </button>
+        ):(
+          <div>
+            <div style={{background:result.toxicity>50?"#ff2d7815":"#00ffcc15",border:`1px solid ${result.toxicity>50?"#ff2d7855":"#00ffcc55"}`,borderRadius:12,padding:16,marginBottom:12,textAlign:"center"}}>
+              <div style={{fontSize:40,marginBottom:8}}>{result.toxicity>70?"🚨":result.toxicity>40?"⚠️":"✅"}</div>
+              <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:22,color:result.toxicity>50?"#ff2d78":"#00ffcc",marginBottom:4}}>
+                {result.toxicity>70?"Тревожные признаки!":result.toxicity>40?"Есть поводы для внимания":"Всё выглядит нормально"}
+              </div>
+              <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:12,color:"#666"}}>
+                Токсичность: {result.toxicity}%
+              </div>
+            </div>
+            {result.manipulation_techniques?.length>0&&(
+              <div style={{marginBottom:12}}>
+                <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#ff2d78",letterSpacing:2,marginBottom:8}}>НАЙДЕНО:</p>
+                {result.manipulation_techniques.map(t=>(
+                  <span key={t} style={{display:"inline-block",background:"#ff2d7815",color:"#ff2d78",border:"1px solid #ff2d7833",borderRadius:20,padding:"4px 12px",fontFamily:"'Share Tech Mono',monospace",fontSize:10,margin:"0 6px 6px 0"}}>{t}</span>
+                ))}
+              </div>
+            )}
+            <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#888",lineHeight:1.5,marginBottom:14}}>{result.summary}</p>
+            <button onClick={()=>setResult(null)} style={{width:"100%",background:"transparent",border:"1px solid #333",borderRadius:10,padding:"11px",fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#444",cursor:"pointer"}}>
+              ПРОВЕРИТЬ ЕЩЁ ОДНО
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -561,6 +682,24 @@ function ScreenResult({ data, onReset }) {
           </button>
         </div>
       )}
+      {/* Совет психолога */}
+      <AdviceBlock advice={data.advice}/>
+
+      {/* Тест на самооценку */}
+      <div style={{background:"#0d0d1a",border:"1px solid #ffffff0a",borderRadius:16,padding:"20px",marginBottom:14,textAlign:"center"}}>
+        <span style={{fontSize:32,display:"block",marginBottom:8}}>🪞</span>
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#fff",margin:"0 0 6px"}}>А как выглядишь ты?</p>
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#555",margin:"0 0 14px",lineHeight:1.5}}>Дай другу проанализировать твои сообщения — узнай свой психотип</p>
+        <button onClick={()=>{
+          const text="Привет! Проверь мои сообщения — узнай мой психотип 👁
+t.me/psychodetector_bot/PsychoDetector";
+          if(navigator.share){navigator.share({text});}
+          else{navigator.clipboard.writeText(text);}
+        }} style={{background:"linear-gradient(135deg,#1a1a2e,#0d0d1a)",border:"1px solid #ffffff22",borderRadius:10,padding:"10px 24px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:14,color:"#888",cursor:"pointer"}}>
+          📨 Отправить другу
+        </button>
+      </div>
+
       <button onClick={()=>setShowShare(true)} style={{width:"100%",background:"linear-gradient(135deg,#0d2d1a,#0a1a2d)",border:"1px solid #00ffcc33",borderRadius:12,padding:"14px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#00ffcc",cursor:"pointer",letterSpacing:1,marginBottom:10}}>📤 Поделиться в Story</button>
       <button onClick={onReset} style={{width:"100%",background:"transparent",border:"1px solid #222",borderRadius:12,padding:"11px",fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#333",cursor:"pointer",letterSpacing:2}}>НОВЫЙ АНАЛИЗ</button>
     </div>
@@ -605,6 +744,7 @@ export default function App() {
   const [result,setResult]=useState(null);
   const [error,setError]=useState("");
   const [isVoice,setIsVoice]=useState(false);
+  const [showRedFlags,setShowRedFlags]=useState(false);
 
   useEffect(()=>{
     try{ if(!safeGet("pd_ob")) setScreen("onboarding"); }catch(e){}
@@ -628,9 +768,15 @@ export default function App() {
     <div style={{background:"#080810",color:"#e0e0e0",minHeight:"100vh",position:"relative",overflowX:"hidden"}}>
       <Noise/>
       {screen==="onboarding" && <ScreenOnboarding onDone={doneOnboarding}/>}
-      {screen==="welcome"    && <ScreenWelcome onAnalyze={handleAnalyze}/>}
+      {screen==="welcome"    && <>
+        {showRedFlags && <RedFlagsModal onClose={()=>setShowRedFlags(false)} onAnalyze={handleAnalyze}/>}
+        <ScreenWelcome onAnalyze={handleAnalyze} onRedFlags={()=>setShowRedFlags(true)}/>
+      </>}
       {screen==="scanning"   && <ScreenScanning isVoice={isVoice}/>}
-      {screen==="result"     && result && <ScreenResult data={result} onReset={reset}/>}
+      {screen==="result"     && result && <>
+        {showRedFlags && <RedFlagsModal onClose={()=>setShowRedFlags(false)} onAnalyze={handleAnalyze}/>}
+        <ScreenResult data={result} onReset={reset}/>
+      </>}
       {screen==="error"      && <ScreenError message={error} onReset={reset}/>}
       {/* Кнопка поддержки видна на всех экранах кроме онбординга */}
       {screen!=="onboarding" && <SupportButton/>}
