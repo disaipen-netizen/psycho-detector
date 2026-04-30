@@ -39,7 +39,13 @@ function toBase64(file) {
 // --- Живой счётчик ------------------------------------------------------------
 function LiveCounter() {
   const [count,setCount]=useState(14823);
-  useEffect(()=>{ const tick=()=>{ setCount(c=>c+Math.floor(Math.random()*3)+1); setTimeout(tick,8000+Math.random()*12000); }; const t=setTimeout(tick,4000); return()=>clearTimeout(t); },[]);
+  useEffect(()=>{
+    // Загружаем реальный счётчик с сервера
+    fetch("/api/counter").then(r=>r.json()).then(d=>{ if(d.count) setCount(14823+d.count); }).catch(()=>{});
+    // Анимация для живости
+    const tick=()=>{ setCount(c=>c+Math.floor(Math.random()*2)+1); setTimeout(tick,12000+Math.random()*18000); };
+    const t=setTimeout(tick,6000); return()=>clearTimeout(t);
+  },[]);
   return (
     <div style={{display:"inline-flex",alignItems:"center",gap:8,background:"#00ffcc0a",border:"1px solid #00ffcc22",borderRadius:20,padding:"6px 14px",marginBottom:20}}>
       <span style={{width:7,height:7,borderRadius:"50%",background:"#00ffcc",boxShadow:"0 0 8px #00ffcc",display:"inline-block",animation:"pdpulse 1.5s ease infinite"}}/>
@@ -494,7 +500,7 @@ function ScreenScanning({ isVoice }) {
 
 // --- Screen 3: Result ---------------------------------------------------------
 function ScreenResult({ data, onReset }) {
-  const [unlocked,setUnlocked]=useState(false);
+  const [unlocked,setUnlocked]=useState(true); // Бесплатно до набора аудитории
   const [showResp,setShowResp]=useState(false);
   const [showShare,setShowShare]=useState(false);
   const toxColor=data.toxicity>70?"#ff2d78":data.toxicity>40?"#ffaa00":"#00ffcc";
