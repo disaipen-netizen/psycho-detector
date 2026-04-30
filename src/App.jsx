@@ -379,7 +379,7 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
         {/* Tabs */}
         <div style={{display:"flex",gap:4,marginBottom:16,background:"#111118",border:"1px solid #222",borderRadius:20,padding:"4px"}}>
           {MODES.map(m=>(
-            <button key={m.id} onClick={()=>setMode(m.id)} style={{flex:1,background:mode===m.id?"#00ffcc":"transparent",color:mode===m.id?"#000":"#555",border:"none",borderRadius:14,padding:"7px 0",fontFamily:"'Share Tech Mono',monospace",fontSize:10,cursor:"pointer",fontWeight:mode===m.id?700:400,transition:"all .2s"}}>
+            <button key={m.id} onClick={()=>setMode(m.id)} style={{flex:1,background:mode===m.id?"#00ffcc":"#1a1a2e",color:mode===m.id?"#000":"#aaaaaa",border:mode===m.id?"none":"1px solid #333",borderRadius:14,padding:"8px 0",fontFamily:"'Rajdhani',sans-serif",fontSize:13,fontWeight:700,cursor:"pointer",transition:"all .2s"}}>
               {m.icon} {m.label}
             </button>
           ))}
@@ -449,27 +449,27 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
             <button onClick={()=>audRef.current.click()} style={{width:"100%",background:"transparent",border:"1px dashed #333",borderRadius:10,padding:"12px",fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#555",cursor:"pointer"}}>
               📁 Загрузить аудио ({audios.length}/5)
             </button>
-            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#2a2a3a",marginTop:10,lineHeight:1.6,textAlign:"center"}}>MP3, OGG, M4A, WebM</p>
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:12,color:"#556655",marginTop:10,lineHeight:1.6,textAlign:"center"}}>MP3, OGG, M4A, WebM</p>
           </div>
         )}
 
         {/* -- Кнопка анализа -- */}
         <button onClick={analyze} disabled={!canAnalyze||loading}
           style={{width:"100%",marginTop:14,
-            background:canAnalyze?"linear-gradient(135deg,#00ffcc,#00cc99)":"#111",
-            border:`1px solid ${canAnalyze?"#00ffcc":"#222"}`,
-            borderRadius:12,padding:"15px",cursor:canAnalyze?"pointer":"not-allowed",
-            fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:17,
-            color:canAnalyze?"#000":"#333",transition:"all .3s",letterSpacing:1}}>
-          {loading?"⏳ Анализируем...":canAnalyze?"🔍 Анализировать":"Выбери файлы или введи текст"}
+            background:canAnalyze?"linear-gradient(135deg,#00ffcc,#00cc99)":"linear-gradient(135deg,#1a1a2e,#111)",
+            border:`2px solid ${canAnalyze?"#00ffcc":"#444"}`,
+            borderRadius:12,padding:"16px",cursor:canAnalyze?"pointer":"default",
+            fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:18,
+            color:canAnalyze?"#000":"#666",transition:"all .3s",letterSpacing:1}}>
+          {loading?"⏳ Анализируем...":canAnalyze?"🔍 Анализировать":"← Выбери файлы или введи текст"}
         </button>
 
         {/* Красные флаги */}
-        <button onClick={()=>onRedFlags()} style={{width:"100%",marginTop:10,background:"transparent",border:"1px solid #ff2d7833",borderRadius:12,padding:"12px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#ff2d78aa",cursor:"pointer",letterSpacing:.5}}>
+        <button onClick={()=>onRedFlags()} style={{width:"100%",marginTop:10,background:"#1a0a0a",border:"1px solid #ff2d7866",borderRadius:12,padding:"13px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#ff2d78",cursor:"pointer",letterSpacing:.5}}>
           🚩 Проверить одно сообщение на красные флаги
         </button>
 
-        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#2a2a3a",marginTop:14}}>ПЕРВЫЙ АНАЛИЗ БЕСПЛАТНО · ДАННЫЕ НЕ СОХРАНЯЮТСЯ</p>
+        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#556655",marginTop:14,letterSpacing:1}}>✓ ПЕРВЫЙ АНАЛИЗ БЕСПЛАТНО · ДАННЫЕ НЕ СОХРАНЯЮТСЯ</p>
       </div>
     </div>
   );
