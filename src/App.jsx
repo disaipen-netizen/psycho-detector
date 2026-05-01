@@ -197,7 +197,7 @@ function TraitBar({ label, value, color, delay=0 }) {
   useEffect(()=>{ const t=setTimeout(()=>setW(value*10),delay); return()=>clearTimeout(t); },[value,delay]);
   return (
     <div style={{marginBottom:10}}>
-      <div style={{display:"flex",justifyContent:"space-between",marginBottom:4,fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#888"}}><span>{label}</span><span style={{color}}>{value}/10</span></div>
+      <div style={{display:"flex",justifyContent:"space-between",marginBottom:4,fontFamily:"'Share Tech Mono',monospace",fontSize:12,color:"#aaa"}}><span>{label}</span><span style={{color}}>{value}/10</span></div>
       <div style={{height:4,background:"#1a1a2e",borderRadius:2,overflow:"hidden"}}><div style={{height:"100%",width:`${w}%`,background:color,borderRadius:2,transition:"width 0.8s cubic-bezier(.4,0,.2,1)",boxShadow:`0 0 8px ${color}`}}/></div>
     </div>
   );
@@ -292,7 +292,7 @@ function SupportButton() {
 
 // --- Screen 1: Welcome --------------------------------------------------------
 function ScreenWelcome({ onAnalyze, onRedFlags }) {
-  const [mode,setMode]=useState("image");
+  const [mode,setMode]=useState("voice");
   const [text,setText]=useState("");
   const [pulse,setPulse]=useState(false);
   const [loading,setLoading]=useState(false);
@@ -373,8 +373,9 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
       <div style={{textAlign:"center",zIndex:1,maxWidth:380,width:"100%"}}>
         <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:5,color:"#00ffcc88",marginBottom:14}}>PSYCHO DETECTOR v2.1</p>
         <LiveCounter/>
-        <h1 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:38,lineHeight:1.05,margin:"0 0 12px",color:"#fff",letterSpacing:-1}}>Кто он<br/><span style={{color:"#00ffcc"}}>на самом</span><br/>деле?</h1>
-        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#666",lineHeight:1.5,margin:"0 0 20px"}}>До 10 скриншотов или 5 голосовых — нейросеть проанализирует всю переписку</p>
+        <h1 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:38,lineHeight:1.05,margin:"0 0 12px",color:"#fff",letterSpacing:-1}}>Узнай кто<br/><span style={{color:"#00ffcc"}}>на самом</span><br/>деле рядом</h1>
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",lineHeight:1.5,margin:"0 0 6px"}}>💔 Партнёр &nbsp;·&nbsp; 👨‍💼 Коллега &nbsp;·&nbsp; 👩 Подруга &nbsp;·&nbsp; 🆕 Новый знакомый</p>
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#555",lineHeight:1.5,margin:"0 0 20px"}}>Голосовое, скриншот или текст — ИИ раскроет скрытые намерения</p>
 
         {/* Tabs */}
         <div style={{display:"flex",gap:4,marginBottom:16,background:"#111118",border:"1px solid #222",borderRadius:20,padding:"4px"}}>
@@ -450,6 +451,12 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
               📁 Загрузить аудио ({audios.length}/5)
             </button>
             <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:12,color:"#556655",marginTop:10,lineHeight:1.6,textAlign:"center"}}>MP3, OGG, M4A, WebM</p>
+            <div style={{marginTop:12,background:"#0d1a0d",border:"1px solid #00ffcc22",borderRadius:10,padding:"10px 14px"}}>
+              <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#00ffcc88",margin:"0 0 6px",letterSpacing:2}}>КАК СКАЧАТЬ ГОЛОСОВОЕ ИЗ TELEGRAM:</p>
+              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#888",margin:"0 0 4px",lineHeight:1.5}}>1. Зажми голосовое сообщение → Сохранить</p>
+              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#888",margin:"0 0 4px",lineHeight:1.5}}>2. Или перешли боту @psychodetector_bot напрямую</p>
+              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#00ffcc88",margin:0,lineHeight:1.5}}>→ Бот автоматически проанализирует!</p>
+            </div>
           </div>
         )}
 
@@ -631,7 +638,7 @@ function ScreenResult({ data, onReset }) {
       <div style={{textAlign:"center",marginBottom:18}}>
         <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,letterSpacing:4,color:"#00ffcc88",margin:"0 0 6px"}}>АНАЛИЗ ЗАВЕРШЁН</p>
         <h2 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:26,color:"#fff",margin:"0 0 8px"}}>{data.name} — профиль готов</h2>
-        {data.summary&&<p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#666",margin:0,lineHeight:1.5}}>{data.summary}</p>}
+        {data.summary&&<p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#aaa",margin:0,lineHeight:1.6}}>{data.summary}</p>}
       </div>
       <UrgencyTimer/>
       <div style={{background:"#0d0d1a",border:`1px solid ${toxColor}44`,borderRadius:16,padding:"24px 20px",marginBottom:14,display:"flex",alignItems:"center",gap:20,boxShadow:`0 0 40px ${toxColor}11`}}>
@@ -639,7 +646,7 @@ function ScreenResult({ data, onReset }) {
         <div style={{flex:1}}>
           <div style={{fontSize:32,marginBottom:4}}>{data.psychotype.icon}</div>
           <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:18,color:toxColor,marginBottom:4}}>{data.psychotype.name}</div>
-          <div style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#666",lineHeight:1.4}}>{data.psychotype.description}</div>
+          <div style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#aaa",lineHeight:1.5}}>{data.psychotype.description}</div>
         </div>
       </div>
       {data.manipulation_techniques?.length>0&&(
@@ -648,17 +655,17 @@ function ScreenResult({ data, onReset }) {
         </div>
       )}
       <div style={{marginBottom:14}}>
-        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,letterSpacing:3,color:"#333",marginBottom:10}}>УЛИКИ</p>
+        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:3,color:"#666",marginBottom:10}}>УЛИКИ</p>
         {(data.evidence||[]).map((e,i)=>{ const c=i===0?"#ff2d78":"#ffaa00"; return (
           <div key={i} style={{background:"#0d0d1a",border:`1px solid ${c}33`,borderLeft:`3px solid ${c}`,borderRadius:"0 10px 10px 0",padding:"12px 14px",marginBottom:10}}>
             <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:600,fontSize:15,color:c,marginBottom:6}}>"{e.quote}"</div>
             <span style={{background:c+"22",color:c,fontSize:9,fontFamily:"'Share Tech Mono',monospace",padding:"2px 8px",borderRadius:20,letterSpacing:1,display:"inline-block",marginBottom:6}}>{e.label}</span>
-            <div style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#666"}}>{e.explanation}</div>
+            <div style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#aaa",marginTop:4,lineHeight:1.5}}>{e.explanation}</div>
           </div>
         );})}
       </div>
       <div style={{background:"#0d0d1a",border:"1px solid #ffffff0a",borderRadius:16,padding:"20px",marginBottom:14}}>
-        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,letterSpacing:3,color:"#333",margin:"0 0 16px"}}>ТЁМНЫЕ ЧЕРТЫ</p>
+        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:3,color:"#666",margin:"0 0 16px"}}>ТЁМНЫЕ ЧЕРТЫ</p>
         <TraitBar label="Манипулятивность" value={data.dark_traits?.manipulation||0} color="#ff2d78" delay={0}/>
         <TraitBar label="Эмпатия"          value={data.dark_traits?.empathy||0}      color="#00ffcc" delay={200}/>
         <TraitBar label="Доминирование"    value={data.dark_traits?.dominance||0}    color="#ffaa00" delay={400}/>
@@ -667,15 +674,15 @@ function ScreenResult({ data, onReset }) {
         <div style={{background:"linear-gradient(135deg,#1a0d20,#0d0d1a)",border:"1px solid #ff2d7855",borderRadius:16,padding:"24px 20px",marginBottom:14,textAlign:"center"}}>
           <div style={{fontSize:36,marginBottom:10}}>🔒</div>
           <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:20,color:"#fff",marginBottom:8}}>Глубокий разбор личности</div>
-          <div style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#555",marginBottom:20,lineHeight:1.5}}>Главная слабость · Идеальный ответ · Как защититься</div>
+          <div style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",marginBottom:20,lineHeight:1.5}}>Главная слабость · Идеальный ответ · Как защититься</div>
           <button onClick={()=>setUnlocked(true)} style={{background:"linear-gradient(135deg,#ff2d78,#ff6b35)",border:"none",borderRadius:10,padding:"14px 32px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#fff",cursor:"pointer",boxShadow:"0 0 30px #ff2d7855",letterSpacing:1}}>⚡ Разблокировать за 1$</button>
           <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#2a2a3a",marginTop:12}}>ОПЛАТА ЧЕРЕЗ TELEGRAM STARS</div>
         </div>
       ):(
         <div style={{background:"#0d0d1a",border:"1px solid #00ffcc33",borderRadius:16,padding:"20px",marginBottom:14}}>
-          {data.boundary_violation&&<><p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,letterSpacing:3,color:"#00ffcc88",margin:"0 0 8px"}}>НАРУШЕНИЕ ГРАНИЦ</p><p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#aaa",lineHeight:1.6,margin:"0 0 18px"}}>🛡️ {data.boundary_violation}</p></>}
+          {data.boundary_violation&&<><p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:3,color:"#00ffcc",margin:"0 0 8px"}}>НАРУШЕНИЕ ГРАНИЦ</p><p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#ccc",lineHeight:1.6,margin:"0 0 18px"}}>🛡️ {data.boundary_violation}</p></>}
           <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,letterSpacing:3,color:"#00ffcc88",margin:"0 0 8px"}}>ГЛАВНАЯ СЛАБОСТЬ</p>
-          <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#ccc",lineHeight:1.6,margin:"0 0 18px"}}>⚠️ {data.main_weakness}</p>
+          <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#ddd",lineHeight:1.6,margin:"0 0 18px"}}>⚠️ {data.main_weakness}</p>
           <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,letterSpacing:3,color:"#00ffcc88",margin:"0 0 10px"}}>ИДЕАЛЬНЫЙ ОТВЕТ</p>
           <button onClick={()=>setShowResp(r=>!r)} style={{width:"100%",background:"#00ffcc11",border:"1px solid #00ffcc44",borderRadius:10,padding:"14px",cursor:"pointer",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#00ffcc",letterSpacing:.5}}>
             {showResp?`💬 ${data.ideal_response}`:"💬 Показать как ответить"}
