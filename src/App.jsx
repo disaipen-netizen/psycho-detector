@@ -367,7 +367,7 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
         <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:5,color:"#00ffcc88",marginBottom:14}}>PSYCHO DETECTOR v2.1</p>
         <LiveCounter/>
         <h1 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:38,lineHeight:1.05,margin:"0 0 12px",color:"#fff",letterSpacing:-1}}>Узнай кто<br/><span style={{color:"#00ffcc"}}>на самом</span><br/>деле рядом</h1>
-        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",lineHeight:1.5,margin:"0 0 6px"}}>💔 Партнёр &nbsp;·&nbsp; 👨‍💼 Коллега &nbsp;·&nbsp; 👩 Подруга &nbsp;·&nbsp; 🆕 Новый знакомый</p>
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",lineHeight:1.5,margin:"0 0 6px"}}>Партнёр · Коллега · Подруга · Новый знакомый</p>
         <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#555",lineHeight:1.5,margin:"0 0 20px"}}>Голосовое, скриншот или текст — ИИ раскроет скрытые намерения</p>
 
         {/* Tabs */}
@@ -466,7 +466,7 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
 
         {/* Красные флаги */}
         <button onClick={()=>onRedFlags()} style={{width:"100%",marginTop:10,background:"#1a0a0a",border:"1px solid #ff2d7866",borderRadius:12,padding:"13px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#ff2d78",cursor:"pointer",letterSpacing:.5}}>
-          Проверить сообщение или скриншот на красные флаги
+          🚩 Проверить сообщение или скриншот на красные флаги
         </button>
 
         <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#556655",marginTop:14,letterSpacing:1}}>✓ ПЕРВЫЙ АНАЛИЗ БЕСПЛАТНО · ДАННЫЕ НЕ СОХРАНЯЮТСЯ</p>
