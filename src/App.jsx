@@ -292,6 +292,7 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
   const [recording,setRecording]=useState(false);
   const [images,setImages]=useState([]); // массив {file, url}
   const [audios,setAudios]=useState([]); // массив {file, url}
+  const [analyzeTarget,setAnalyzeTarget]=useState("other"); // other=собеседник, me=я
   const imgRef=useRef(); const audRef=useRef(); const mediaRef=useRef();
 
   useEffect(()=>{ const id=setInterval(()=>setPulse(p=>!p),1800); return()=>clearInterval(id); },[]);
@@ -339,7 +340,7 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
       if(mode==="image"&&images.length>0){
         const b64s=await Promise.all(images.map(i=>toBase64(i.file)));
         const types=images.map(i=>i.file.type||"image/jpeg");
-        onAnalyze({images:b64s,imageTypes:types});
+        onAnalyze({images:b64s,imageTypes:types,analyzeTarget});
       } else if(mode==="voice"&&audios.length>0){
         const b64s=await Promise.all(audios.map(a=>toBase64(a.file)));
         const types=audios.map(a=>a.file.type||"audio/webm");
@@ -405,6 +406,29 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
                 Можно выбрать несколько сразу
               </div>
             </div>
+
+            {/* Чьи сообщения анализировать */}
+            {images.length>0&&(
+              <div style={{marginTop:14,background:"#0d1a1a",border:"1px solid #00ffcc22",borderRadius:12,padding:"14px"}}>
+                <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#00ffcc",letterSpacing:2,margin:"0 0 10px"}}>ЧЬИ СООБЩЕНИЯ АНАЛИЗИРОВАТЬ?</p>
+                <div style={{display:"flex",gap:8}}>
+                  {[
+                    {id:"other", label:"Собеседника", hint:"(не мои)"},
+                    {id:"me",    label:"Мои",          hint:"(как я выгляжу)"},
+                  ].map(opt=>(
+                    <button key={opt.id} onClick={()=>setAnalyzeTarget(opt.id)}
+                      style={{flex:1,background:analyzeTarget===opt.id?"#00ffcc":"#111",
+                        border:`1px solid ${analyzeTarget===opt.id?"#00ffcc":"#333"}`,
+                        borderRadius:10,padding:"10px 8px",cursor:"pointer",transition:"all .2s"}}>
+                      <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,
+                        color:analyzeTarget===opt.id?"#000":"#888"}}>{opt.label}</div>
+                      <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,
+                        color:analyzeTarget===opt.id?"#000a":"#444"}}>{opt.hint}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
