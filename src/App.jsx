@@ -150,28 +150,21 @@ function ShareCard({ data, onClose }) {
           <div style={{position:"relative",marginBottom:12}}>
             <img src={imgUrl} alt="Psycho Result"
               style={{width:"100%",borderRadius:10,display:"block"}}/>
-            {/* Подсказка поверх картинки */}
-            <div style={{position:"absolute",bottom:10,left:0,right:0,textAlign:"center"}}>
-              <span style={{background:"#000000aa",borderRadius:20,padding:"6px 14px",fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#fff"}}>
-                👆 Зажми картинку → Сохранить
-              </span>
-            </div>
+    
           </div>
         )}
 
         {/* Кнопка поделиться (Web Share API) */}
         <button onClick={handleShare} style={{width:"100%",marginBottom:10,background:"linear-gradient(135deg,#00ffcc,#00cc99)",border:"none",borderRadius:10,padding:"13px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#000",cursor:"pointer",letterSpacing:1}}>
-          📤 Поделиться картинкой
+          Поделиться картинкой
         </button>
 
         {/* Кнопка скопировать ссылку */}
         <button onClick={handleCopyLink} style={{width:"100%",background:copied?"#00ffcc22":"transparent",border:"1px solid #00ffcc33",borderRadius:10,padding:"11px",fontFamily:"'Share Tech Mono',monospace",fontSize:12,color:"#00ffcc",cursor:"pointer",transition:"all .3s"}}>
-          {copied ? "✓ Ссылка скопирована!" : "🔗 Скопировать ссылку на бота"}
+          {copied ? "✓ Ссылка скопирована!" : "Скопировать ссылку на бота"}
         </button>
 
-        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#333",textAlign:"center",marginTop:10,lineHeight:1.6}}>
-          На телефоне: зажми картинку → Сохранить фото → загрузи в Stories
-        </p>
+
       </div>
     </div>
   );
@@ -188,7 +181,7 @@ function ToxicGauge({ value }) {
       <circle cx={70} cy={70} r={r} fill="none" stroke="#1a1a2e" strokeWidth={10}/>
       <circle cx={70} cy={70} r={r} fill="none" stroke={color} strokeWidth={10} strokeDasharray={circ} strokeDashoffset={circ-(circ*display/100)} strokeLinecap="round" transform="rotate(-90 70 70)" filter="url(#glow2)" style={{transition:"stroke .3s"}}/>
       <text x={70} y={65} textAnchor="middle" fill={color} style={{fontFamily:"'Rajdhani',sans-serif",fontSize:28,fontWeight:700}}>{display}%</text>
-      <text x={70} y={84} textAnchor="middle" fill="#555" style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,letterSpacing:2}}>ТОКСИЧНОСТЬ</text>
+      <text x={70} y={84} textAnchor="middle" fill="#555" style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:2}}>ТОКСИЧНОСТЬ</text>
     </svg>
   );
 }
@@ -244,7 +237,7 @@ function ScreenOnboarding({ onDone }) {
           {isLast?"🚀 Начать анализ":"Далее →"}
         </button>
         {!isLast&&(
-          <button onClick={onDone} style={{background:"none",border:"none",fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#333",cursor:"pointer",letterSpacing:2}}>ПРОПУСТИТЬ</button>
+          <button onClick={onDone} style={{background:"none",border:"none",fontFamily:"'Share Tech Mono',monospace",fontSize:14,color:"#666",cursor:"pointer",letterSpacing:1}}>ПРОПУСТИТЬ</button>
         )}
       </div>
     </div>
@@ -358,7 +351,7 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
   };
 
   const canAnalyze=(mode==="image"&&images.length>0)||(mode==="voice"&&audios.length>0)||(mode==="text"&&text.length>=20);
-  const MODES=[{id:"image",icon:"📸",label:"Скриншоты"},{id:"text",icon:"✏️",label:"Текст"},{id:"voice",icon:"🎤",label:"Голосовые"}];
+  const MODES=[{id:"image",icon:"",label:"Скриншоты"},{id:"text",icon:"",label:"Текст"},{id:"voice",icon:"",label:"Голосовые"}];
 
   return (
     <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"40px 20px 100px",position:"relative"}}>
@@ -381,7 +374,7 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
         <div style={{display:"flex",gap:4,marginBottom:16,background:"#111118",border:"1px solid #222",borderRadius:20,padding:"4px"}}>
           {MODES.map(m=>(
             <button key={m.id} onClick={()=>setMode(m.id)} style={{flex:1,background:mode===m.id?"#00ffcc":"#1a1a2e",color:mode===m.id?"#000":"#aaaaaa",border:mode===m.id?"none":"1px solid #333",borderRadius:14,padding:"8px 0",fontFamily:"'Rajdhani',sans-serif",fontSize:13,fontWeight:700,cursor:"pointer",transition:"all .2s"}}>
-              {m.icon} {m.label}
+              {m.label}
             </button>
           ))}
         </div>
@@ -441,14 +434,14 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
 
             {/* Запись */}
             <button onClick={recording?stopRec:startRec} style={{width:"100%",background:recording?"linear-gradient(135deg,#ff2d78,#cc0055)":"linear-gradient(135deg,#00ffcc22,#00ffcc11)",border:`1px solid ${recording?"#ff2d78":"#00ffcc44"}`,borderRadius:12,padding:"16px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:recording?"#fff":"#00ffcc",cursor:"pointer",marginBottom:10,letterSpacing:1,transition:"all .3s",animation:recording?"recpulse 1s ease infinite":"none"}}>
-              {recording?"⏹ Остановить запись":"🎤 Записать голосовое"}
+              {recording?"⏹ Остановить запись":"Записать голосовое"}
             </button>
             <style>{`@keyframes recpulse{0%,100%{box-shadow:0 0 0 0 #ff2d7855}50%{box-shadow:0 0 0 12px transparent}}`}</style>
 
             <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#333",margin:"0 0 10px",textAlign:"center"}}>— или загрузи файлы —</p>
             <input ref={audRef} type="file" accept="audio/*" multiple style={{display:"none"}} onChange={handleAudios}/>
             <button onClick={()=>audRef.current.click()} style={{width:"100%",background:"transparent",border:"1px dashed #333",borderRadius:10,padding:"12px",fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#555",cursor:"pointer"}}>
-              📁 Загрузить аудио ({audios.length}/5)
+              Загрузить аудио ({audios.length}/5)
             </button>
             <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:12,color:"#556655",marginTop:10,lineHeight:1.6,textAlign:"center"}}>MP3, OGG, M4A, WebM</p>
             <div style={{marginTop:12,background:"#0d1a0d",border:"1px solid #00ffcc22",borderRadius:10,padding:"10px 14px"}}>
@@ -468,12 +461,12 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
             borderRadius:12,padding:"16px",cursor:canAnalyze?"pointer":"default",
             fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:18,
             color:canAnalyze?"#000":"#666",transition:"all .3s",letterSpacing:1}}>
-          {loading?"⏳ Анализируем...":canAnalyze?"🔍 Анализировать":"← Выбери файлы или введи текст"}
+          {loading?"⏳ Анализируем...":canAnalyze?"Анализировать":"Выбери файлы или введи текст"}
         </button>
 
         {/* Красные флаги */}
         <button onClick={()=>onRedFlags()} style={{width:"100%",marginTop:10,background:"#1a0a0a",border:"1px solid #ff2d7866",borderRadius:12,padding:"13px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#ff2d78",cursor:"pointer",letterSpacing:.5}}>
-          🚩 Проверить одно сообщение на красные флаги
+          Проверить сообщение или скриншот на красные флаги
         </button>
 
         <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#556655",marginTop:14,letterSpacing:1}}>✓ ПЕРВЫЙ АНАЛИЗ БЕСПЛАТНО · ДАННЫЕ НЕ СОХРАНЯЮТСЯ</p>
@@ -518,9 +511,9 @@ function AdviceBlock({ advice }) {
     <div style={{background:"linear-gradient(135deg,#0d1f2d,#0a1a0d)",border:"1px solid #00ffcc33",borderRadius:16,padding:"20px",marginBottom:14}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer"}} onClick={()=>setOpen(o=>!o)}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <span style={{fontSize:24}}>🧘</span>
+          <span style={{fontSize:24}}></span>
           <div>
-            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,letterSpacing:3,color:"#00ffcc88",margin:"0 0 2px"}}>СОВЕТ ПСИХОЛОГА</p>
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:2,color:"#00ffcc",margin:"0 0 2px"}}>СОВЕТ ПСИХОЛОГА</p>
             <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#fff",margin:0}}>{advice.title||"Как вести себя с этим типом"}</p>
           </div>
         </div>
@@ -533,7 +526,7 @@ function AdviceBlock({ advice }) {
           </p>
           {advice.tactics?.length>0&&(
             <div style={{marginBottom:14}}>
-              <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#00ffcc88",letterSpacing:2,marginBottom:8}}>ЧТО ДЕЛАТЬ:</p>
+              <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#00ffcc",letterSpacing:2,marginBottom:8}}>ЧТО ДЕЛАТЬ:</p>
               {advice.tactics.map((t,i)=>(
                 <div key={i} style={{display:"flex",gap:10,marginBottom:8}}>
                   <span style={{color:"#00ffcc",fontFamily:"'Share Tech Mono',monospace",fontSize:12,marginTop:2}}>0{i+1}</span>
@@ -544,7 +537,7 @@ function AdviceBlock({ advice }) {
           )}
           {advice.warning&&(
             <div style={{background:"#ff2d7810",border:"1px solid #ff2d7833",borderRadius:10,padding:"10px 14px"}}>
-              <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#ff2d78",letterSpacing:2,margin:"0 0 4px"}}>ЧЕГО НЕ ДЕЛАТЬ:</p>
+              <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#ff2d78",letterSpacing:2,margin:"0 0 4px"}}>ЧЕГО НЕ ДЕЛАТЬ:</p>
               <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#ff2d78aa",margin:0,lineHeight:1.5}}>⛔ {advice.warning}</p>
             </div>
           )}
@@ -557,15 +550,26 @@ function AdviceBlock({ advice }) {
 // --- 🆕 Красные флаги модалка ------------------------------------------------
 function RedFlagsModal({ onClose, onAnalyze }) {
   const [msg,setMsg]=useState("");
+  const [rfImage,setRfImage]=useState(null);
   const [result,setResult]=useState(null);
   const [loading,setLoading]=useState(false);
+  const rfFileRef=useRef();
+
+  const handleRfImage=async e=>{
+    const file=e.target.files[0]; if(!file) return;
+    const b64=await toBase64(file);
+    setRfImage({b64,type:file.type||"image/jpeg"});
+  };
 
   const check=async()=>{
-    if(msg.trim().length<5) return;
+    if(msg.trim().length<5 && !rfImage) return;
     setLoading(true);
     try {
+      const payload = rfImage
+        ? {images:[rfImage.b64],imageTypes:[rfImage.type]}
+        : {text:`Проверь это сообщение на красные флаги и манипуляции: "${msg}"`,redFlagsMode:true};
       const res=await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({text:`Проверь одно сообщение на красные флаги и манипуляции: "${msg}"`,redFlagsMode:true})});
+        body:JSON.stringify(payload)});
       const data=await res.json();
       setResult(data);
     } catch(e){}
@@ -577,24 +581,40 @@ function RedFlagsModal({ onClose, onAnalyze }) {
       <div style={{background:"#0d0d1a",border:"1px solid #ff2d7833",borderRadius:16,padding:24,width:"100%",maxWidth:440,maxHeight:"80vh",overflowY:"auto"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
           <div>
-            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#ff2d78",letterSpacing:3,margin:"0 0 4px"}}>ДЕТЕКТОР</p>
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#ff2d78",letterSpacing:3,margin:"0 0 4px"}}>ДЕТЕКТОР</p>
             <span style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:20,color:"#fff"}}>🚩 Красные флаги</span>
           </div>
           <button onClick={onClose} style={{background:"none",border:"none",color:"#444",fontSize:22,cursor:"pointer"}}>✕</button>
         </div>
-        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#666",marginBottom:16,lineHeight:1.5}}>
-          Вставь одно сообщение — проверим есть ли тревожные признаки
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",marginBottom:16,lineHeight:1.5}}>
+          Вставь текст или загрузи скриншот — проверим есть ли тревожные признаки
         </p>
+        {/* Загрузка скриншота */}
+        <input ref={rfFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleRfImage}/>
+        {rfImage?(
+          <div style={{position:"relative",marginBottom:12}}>
+            <img src={URL.createObjectURL(new Blob([]))} alt="" style={{display:"none"}}/>
+            <div style={{background:"#ff2d7815",border:"1px solid #ff2d7844",borderRadius:10,padding:"10px 14px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+              <span style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#ff2d78"}}>Скриншот загружен</span>
+              <button onClick={()=>setRfImage(null)} style={{background:"none",border:"none",color:"#ff2d78",cursor:"pointer",fontSize:18}}>✕</button>
+            </div>
+          </div>
+        ):(
+          <button onClick={()=>rfFileRef.current.click()} style={{width:"100%",background:"#1a0a0a",border:"1px dashed #ff2d7844",borderRadius:10,padding:"11px",fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#ff2d7888",cursor:"pointer",marginBottom:10}}>
+            Загрузить скриншот
+          </button>
+        )}
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#444",textAlign:"center",margin:"0 0 8px"}}>— или вставь текст —</p>
         <textarea value={msg} onChange={e=>setMsg(e.target.value)}
           placeholder="Вставь сообщение здесь..."
           style={{width:"100%",minHeight:100,background:"#111",border:"1px solid #ff2d7833",borderRadius:10,padding:"12px",
             fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#ccc",resize:"none",outline:"none",boxSizing:"border-box",marginBottom:12}}/>
         {!result?(
-          <button onClick={check} disabled={msg.length<5||loading} style={{width:"100%",
-            background:msg.length>=5?"linear-gradient(135deg,#ff2d78,#ff6b35)":"#111",
+          <button onClick={check} disabled={(msg.length<5&&!rfImage)||loading} style={{width:"100%",
+            background:(msg.length>=5||rfImage)?"linear-gradient(135deg,#ff2d78,#ff6b35)":"#111",
             border:"none",borderRadius:10,padding:"13px",fontFamily:"'Rajdhani',sans-serif",
-            fontWeight:700,fontSize:16,color:msg.length>=5?"#fff":"#333",cursor:msg.length>=5?"pointer":"not-allowed"}}>
-            {loading?"Проверяем...":"🚩 Проверить"}
+            fontWeight:700,fontSize:16,color:(msg.length>=5||rfImage)?"#fff":"#333",cursor:(msg.length>=5||rfImage)?"pointer":"not-allowed"}}>
+            {loading?"Проверяем...":"Проверить"}
           </button>
         ):(
           <div>
@@ -609,14 +629,14 @@ function RedFlagsModal({ onClose, onAnalyze }) {
             </div>
             {result.manipulation_techniques?.length>0&&(
               <div style={{marginBottom:12}}>
-                <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#ff2d78",letterSpacing:2,marginBottom:8}}>НАЙДЕНО:</p>
+                <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#ff2d78",letterSpacing:2,marginBottom:8}}>НАЙДЕНО:</p>
                 {result.manipulation_techniques.map(t=>(
                   <span key={t} style={{display:"inline-block",background:"#ff2d7815",color:"#ff2d78",border:"1px solid #ff2d7833",borderRadius:20,padding:"4px 12px",fontFamily:"'Share Tech Mono',monospace",fontSize:10,margin:"0 6px 6px 0"}}>{t}</span>
                 ))}
               </div>
             )}
-            <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#888",lineHeight:1.5,marginBottom:14}}>{result.summary}</p>
-            <button onClick={()=>setResult(null)} style={{width:"100%",background:"transparent",border:"1px solid #333",borderRadius:10,padding:"11px",fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#444",cursor:"pointer"}}>
+            <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#bbb",lineHeight:1.6,marginBottom:14}}>{result.summary}</p>
+            <button onClick={()=>setResult(null)} style={{width:"100%",background:"transparent",border:"1px solid #333",borderRadius:10,padding:"11px",fontFamily:"'Share Tech Mono',monospace",fontSize:15,color:"#888",cursor:"pointer"}}>
               ПРОВЕРИТЬ ЕЩЁ ОДНО
             </button>
           </div>
@@ -636,7 +656,7 @@ function ScreenResult({ data, onReset }) {
     <div style={{minHeight:"100vh",padding:"28px 20px 100px",maxWidth:480,margin:"0 auto"}}>
       {showShare&&<ShareCard data={data} onClose={()=>setShowShare(false)}/>}
       <div style={{textAlign:"center",marginBottom:18}}>
-        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,letterSpacing:4,color:"#00ffcc88",margin:"0 0 6px"}}>АНАЛИЗ ЗАВЕРШЁН</p>
+        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:2,color:"#00ffcc",margin:"0 0 6px"}}>АНАЛИЗ ЗАВЕРШЁН</p>
         <h2 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:26,color:"#fff",margin:"0 0 8px"}}>{data.name} — профиль готов</h2>
         {data.summary&&<p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#aaa",margin:0,lineHeight:1.6}}>{data.summary}</p>}
       </div>
@@ -659,7 +679,7 @@ function ScreenResult({ data, onReset }) {
         {(data.evidence||[]).map((e,i)=>{ const c=i===0?"#ff2d78":"#ffaa00"; return (
           <div key={i} style={{background:"#0d0d1a",border:`1px solid ${c}33`,borderLeft:`3px solid ${c}`,borderRadius:"0 10px 10px 0",padding:"12px 14px",marginBottom:10}}>
             <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:600,fontSize:15,color:c,marginBottom:6}}>"{e.quote}"</div>
-            <span style={{background:c+"22",color:c,fontSize:9,fontFamily:"'Share Tech Mono',monospace",padding:"2px 8px",borderRadius:20,letterSpacing:1,display:"inline-block",marginBottom:6}}>{e.label}</span>
+            <span style={{background:c+"22",color:c,fontSize:11,fontFamily:"'Share Tech Mono',monospace",padding:"2px 8px",borderRadius:20,letterSpacing:1,display:"inline-block",marginBottom:6}}>{e.label}</span>
             <div style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#aaa",marginTop:4,lineHeight:1.5}}>{e.explanation}</div>
           </div>
         );})}
@@ -672,20 +692,20 @@ function ScreenResult({ data, onReset }) {
       </div>
       {!unlocked?(
         <div style={{background:"linear-gradient(135deg,#1a0d20,#0d0d1a)",border:"1px solid #ff2d7855",borderRadius:16,padding:"24px 20px",marginBottom:14,textAlign:"center"}}>
-          <div style={{fontSize:36,marginBottom:10}}>🔒</div>
+          <div style={{fontSize:36,marginBottom:10}}></div>
           <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:20,color:"#fff",marginBottom:8}}>Глубокий разбор личности</div>
           <div style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",marginBottom:20,lineHeight:1.5}}>Главная слабость · Идеальный ответ · Как защититься</div>
-          <button onClick={()=>setUnlocked(true)} style={{background:"linear-gradient(135deg,#ff2d78,#ff6b35)",border:"none",borderRadius:10,padding:"14px 32px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#fff",cursor:"pointer",boxShadow:"0 0 30px #ff2d7855",letterSpacing:1}}>⚡ Разблокировать за 1$</button>
-          <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#2a2a3a",marginTop:12}}>ОПЛАТА ЧЕРЕЗ TELEGRAM STARS</div>
+          <button onClick={()=>setUnlocked(true)} style={{background:"linear-gradient(135deg,#ff2d78,#ff6b35)",border:"none",borderRadius:10,padding:"14px 32px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#fff",cursor:"pointer",boxShadow:"0 0 30px #ff2d7855",letterSpacing:1}}>Разблокировать за 1$</button>
+          <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#2a2a3a",marginTop:12}}>ОПЛАТА ЧЕРЕЗ TELEGRAM STARS</div>
         </div>
       ):(
         <div style={{background:"#0d0d1a",border:"1px solid #00ffcc33",borderRadius:16,padding:"20px",marginBottom:14}}>
           {data.boundary_violation&&<><p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:3,color:"#00ffcc",margin:"0 0 8px"}}>НАРУШЕНИЕ ГРАНИЦ</p><p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#ccc",lineHeight:1.6,margin:"0 0 18px"}}>🛡️ {data.boundary_violation}</p></>}
-          <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,letterSpacing:3,color:"#00ffcc88",margin:"0 0 8px"}}>ГЛАВНАЯ СЛАБОСТЬ</p>
+          <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:2,color:"#00ffcc",margin:"0 0 8px"}}>ГЛАВНАЯ СЛАБОСТЬ</p>
           <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#ddd",lineHeight:1.6,margin:"0 0 18px"}}>⚠️ {data.main_weakness}</p>
-          <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,letterSpacing:3,color:"#00ffcc88",margin:"0 0 10px"}}>ИДЕАЛЬНЫЙ ОТВЕТ</p>
+          <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:2,color:"#00ffcc",margin:"0 0 10px"}}>ИДЕАЛЬНЫЙ ОТВЕТ</p>
           <button onClick={()=>setShowResp(r=>!r)} style={{width:"100%",background:"#00ffcc11",border:"1px solid #00ffcc44",borderRadius:10,padding:"14px",cursor:"pointer",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#00ffcc",letterSpacing:.5}}>
-            {showResp?`💬 ${data.ideal_response}`:"💬 Показать как ответить"}
+            {showResp?`💬 ${data.ideal_response}`:"Показать как ответить"}
           </button>
         </div>
       )}
@@ -702,12 +722,12 @@ function ScreenResult({ data, onReset }) {
           if(navigator.share){navigator.share({text});}
           else{navigator.clipboard.writeText(text);}
         }} style={{background:"linear-gradient(135deg,#1a1a2e,#0d0d1a)",border:"1px solid #ffffff22",borderRadius:10,padding:"10px 24px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:14,color:"#888",cursor:"pointer"}}>
-          📨 Отправить другу
+          Отправить другу
         </button>
       </div>
 
-      <button onClick={()=>setShowShare(true)} style={{width:"100%",background:"linear-gradient(135deg,#0d2d1a,#0a1a2d)",border:"1px solid #00ffcc33",borderRadius:12,padding:"14px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#00ffcc",cursor:"pointer",letterSpacing:1,marginBottom:10}}>📤 Поделиться в Story</button>
-      <button onClick={onReset} style={{width:"100%",background:"transparent",border:"1px solid #222",borderRadius:12,padding:"11px",fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#333",cursor:"pointer",letterSpacing:2}}>НОВЫЙ АНАЛИЗ</button>
+      <button onClick={()=>setShowShare(true)} style={{width:"100%",background:"linear-gradient(135deg,#0d2d1a,#0a1a2d)",border:"1px solid #00ffcc33",borderRadius:12,padding:"14px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#00ffcc",cursor:"pointer",letterSpacing:1,marginBottom:10}}>Поделиться в Story</button>
+      <button onClick={onReset} style={{width:"100%",background:"transparent",border:"1px solid #222",borderRadius:12,padding:"11px",fontFamily:"'Share Tech Mono',monospace",fontSize:14,color:"#666",cursor:"pointer",letterSpacing:1}}>Новый анализ</button>
     </div>
   );
 }
@@ -730,11 +750,11 @@ function ScreenError({ message, onReset }) {
 
       <div style={{display:"flex",flexDirection:"column",gap:10,width:"100%",maxWidth:300}}>
         <button onClick={onReset} style={{background:"#ff2d7822",border:"1px solid #ff2d7855",borderRadius:10,padding:"12px 28px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#ff2d78",cursor:"pointer"}}>
-          🔄 Попробовать снова
+          Попробовать снова
         </button>
         <a href="https://t.me/psycho_support_bot" target="_blank" rel="noreferrer"
           style={{background:"#00ffcc11",border:"1px solid #00ffcc33",borderRadius:10,padding:"12px 28px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#00ffcc",textDecoration:"none",display:"block"}}>
-          💬 Написать в поддержку
+          Написать в поддержку
         </a>
       </div>
     </div>
