@@ -293,6 +293,7 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
   const [images,setImages]=useState([]); // массив {file, url}
   const [audios,setAudios]=useState([]); // массив {file, url}
   const [analyzeTarget,setAnalyzeTarget]=useState("other"); // other=собеседник, me=я
+  const [imageContext,setImageContext]=useState(""); // доп контекст от пользователя
   const imgRef=useRef(); const audRef=useRef(); const mediaRef=useRef();
 
   useEffect(()=>{ const id=setInterval(()=>setPulse(p=>!p),1800); return()=>clearInterval(id); },[]);
@@ -340,7 +341,7 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
       if(mode==="image"&&images.length>0){
         const b64s=await Promise.all(images.map(i=>toBase64(i.file)));
         const types=images.map(i=>i.file.type||"image/jpeg");
-        onAnalyze({images:b64s,imageTypes:types,analyzeTarget});
+        onAnalyze({images:b64s,imageTypes:types,analyzeTarget,imageContext:imageContext.trim()});
       } else if(mode==="voice"&&audios.length>0){
         const b64s=await Promise.all(audios.map(a=>toBase64(a.file)));
         const types=audios.map(a=>a.file.type||"audio/webm");
@@ -427,6 +428,22 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
                     </button>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Дополнительный контекст */}
+            {images.length>0&&(
+              <div style={{marginTop:10}}>
+                <textarea
+                  value={imageContext}
+                  onChange={e=>setImageContext(e.target.value)}
+                  placeholder={`Необязательно: уточни контекст\n\nНапример:\n• "Слева Дархан — мой коллега"\n• "Это WhatsApp, зелёные — мои сообщения"\n• "Хочу понять манипулирует ли он мной"`}
+                  style={{width:"100%",minHeight:90,background:"#0a0a14",
+                    border:"1px solid #ffffff15",borderRadius:10,padding:"12px",
+                    fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#aaa",
+                    resize:"none",outline:"none",boxSizing:"border-box",
+                    lineHeight:1.5,marginTop:4}}
+                />
               </div>
             )}
           </div>
