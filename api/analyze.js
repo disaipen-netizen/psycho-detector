@@ -113,7 +113,7 @@ module.exports = async function handler(req, res) {
           type: "image",
           source: {
             type: "base64",
-            media_type: imageTypes?.[i] || "image/jpeg",
+            media_type: "image/jpeg", // всегда jpeg после сжатия через canvas
             data: b64,
           },
         })),
