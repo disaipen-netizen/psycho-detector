@@ -202,6 +202,7 @@ const ONBOARDING_STEPS = [
   { icon:"🎤", title:"Или голосовое", desc:"Запиши или загрузи голосовое сообщение — мы расшифруем и проанализируем" },
   { icon:"🧠", title:"ИИ анализирует", desc:"Нейросеть определит психотип, манипуляции и скрытые намерения" },
   { icon:"🔓", title:"Получи результат", desc:"Базовый анализ бесплатно. Полный разбор — всего за 1$" },
+  { icon:"💡", title:"Важно знать", desc:"Это инструмент для рефлексии, а не диагноз. ИИ анализирует паттерны общения, но не заменяет живого специалиста. При признаках абьюза или насилия — обратись к психологу или на горячую линию помощи.", isDisclaimer:true },
 ];
 
 function ScreenOnboarding({ onDone }) {
@@ -218,11 +219,11 @@ function ScreenOnboarding({ onDone }) {
         <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:5,color:"#00ffcc88",marginBottom:32}}>PSYCHO DETECTOR</p>
 
         {/* Card */}
-        <div style={{background:"#0d0d1a",border:"1px solid #00ffcc22",borderRadius:20,padding:"40px 28px",marginBottom:28,minHeight:220,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
+        <div style={{background:current.isDisclaimer?"#1a0d1a":"#0d0d1a",border:`1px solid ${current.isDisclaimer?"#ffaa0044":"#00ffcc22"}`,borderRadius:20,padding:"40px 28px",marginBottom:28,minHeight:220,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
           <div style={{fontSize:56,marginBottom:20}}>{current.icon}</div>
-          <h2 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:24,color:"#fff",margin:"0 0 12px"}}>{current.title}</h2>
-          <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#666",lineHeight:1.5,margin:0}}>{current.desc}</p>
-          <ScanLine/>
+          <h2 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:24,color:current.isDisclaimer?"#ffaa00":"#fff",margin:"0 0 12px"}}>{current.title}</h2>
+          <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:current.isDisclaimer?15:16,color:current.isDisclaimer?"#bbb":"#888",lineHeight:1.6,margin:0}}>{current.desc}</p>
+          {!current.isDisclaimer&&<ScanLine/>}
         </div>
 
         {/* Dots */}
@@ -245,6 +246,390 @@ function ScreenOnboarding({ onDone }) {
 }
 
 // --- 🆕 ПОДДЕРЖКА — кнопка и модалка -----------------------------------------
+// --- 🆕 ДИСКЛЕЙМЕР В РЕЗУЛЬТАТЕ ---------------------------------------------
+function ResultDisclaimer() {
+  return (
+    <div style={{background:"#1a1a0d",border:"1px solid #ffaa0033",borderRadius:10,padding:"12px 14px",marginBottom:14,display:"flex",gap:10,alignItems:"flex-start"}}>
+      <span style={{fontSize:18,flexShrink:0}}>💡</span>
+      <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#aaa",lineHeight:1.5,margin:0}}>
+        Это аналитический инструмент, а не диагноз. При серьёзных проблемах обратись к психологу — это нормально просить помощи.
+      </p>
+    </div>
+  );
+}
+
+// --- 🆕 КНОПКА "НУЖНА ПОМОЩЬ?" ----------------------------------------------
+function HelpButton() {
+  const [open,setOpen]=useState(false);
+  return (
+    <>
+      <button onClick={()=>setOpen(true)} style={{position:"fixed",top:14,right:60,zIndex:50,width:40,height:40,borderRadius:"50%",background:"#1a0d0d",border:"1px solid #ff2d7844",color:"#ff2d78",fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 0 15px #ff2d7822"}}>
+        🆘
+      </button>
+      {open&&(
+        <div style={{position:"fixed",inset:0,background:"#000000dd",zIndex:200,display:"flex",alignItems:"flex-end",justifyContent:"center",padding:20}} onClick={()=>setOpen(false)}>
+          <div style={{background:"#0d0d1a",border:"1px solid #ff2d7833",borderRadius:16,padding:24,width:"100%",maxWidth:440,maxHeight:"80vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+              <div>
+                <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#ff2d78",letterSpacing:3,margin:"0 0 4px"}}>ПОДДЕРЖКА</p>
+                <span style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:22,color:"#fff"}}>Нужна помощь?</span>
+              </div>
+              <button onClick={()=>setOpen(false)} style={{background:"none",border:"none",color:"#444",fontSize:22,cursor:"pointer"}}>✕</button>
+            </div>
+
+            <div style={{background:"#1a0a1a",border:"1px solid #ff2d7833",borderRadius:10,padding:"12px 14px",marginBottom:16}}>
+              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#bbb",margin:0,lineHeight:1.5}}>
+                Если ты в сложной ситуации — не оставайся один(одна). Эти контакты помогут анонимно и бесплатно.
+              </p>
+            </div>
+
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#888",letterSpacing:2,marginBottom:10}}>КАЗАХСТАН</p>
+            <div style={{marginBottom:16}}>
+              <div style={{background:"#0a0a14",borderRadius:10,padding:"12px 14px",marginBottom:8}}>
+                <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:600,fontSize:15,color:"#fff",margin:"0 0 4px"}}>Телефон доверия</p>
+                <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:14,color:"#00ffcc",margin:"0 0 4px"}}>150</p>
+                <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:12,color:"#666",margin:0}}>Анонимно, бесплатно, круглосуточно</p>
+              </div>
+              <div style={{background:"#0a0a14",borderRadius:10,padding:"12px 14px"}}>
+                <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:600,fontSize:15,color:"#fff",margin:"0 0 4px"}}>Кризисная линия</p>
+                <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:14,color:"#00ffcc",margin:"0 0 4px"}}>1415</p>
+                <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:12,color:"#666",margin:0}}>Помощь при насилии</p>
+              </div>
+            </div>
+
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#888",letterSpacing:2,marginBottom:10}}>РОССИЯ</p>
+            <div style={{marginBottom:16}}>
+              <div style={{background:"#0a0a14",borderRadius:10,padding:"12px 14px"}}>
+                <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:600,fontSize:15,color:"#fff",margin:"0 0 4px"}}>Телефон доверия</p>
+                <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:14,color:"#00ffcc",margin:"0 0 4px"}}>8-800-2000-122</p>
+                <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:12,color:"#666",margin:0}}>Анонимно, бесплатно, круглосуточно</p>
+              </div>
+            </div>
+
+            <div style={{background:"linear-gradient(135deg,#0d1f2d,#0a1a0d)",border:"1px solid #00ffcc33",borderRadius:12,padding:"14px 16px",marginTop:14}}>
+              <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:2,color:"#00ffcc",margin:"0 0 8px"}}>СКОРО</p>
+              <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#fff",margin:"0 0 6px"}}>Консультация с психологом</p>
+              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#888",margin:"0 0 10px",lineHeight:1.5}}>
+                Скоро здесь появятся проверенные специалисты для онлайн-консультаций. Если ты психолог и хочешь сотрудничать — напиши нам.
+              </p>
+              <a href="https://t.me/psycho_support_bot?start=psycholog" target="_blank" rel="noreferrer" style={{display:"inline-block",background:"#00ffcc22",border:"1px solid #00ffcc44",borderRadius:8,padding:"8px 14px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:13,color:"#00ffcc",textDecoration:"none"}}>
+                Я психолог →
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// --- 🆕 ПРОГНОЗ ОТНОШЕНИЙ -----------------------------------------------------
+function RelationshipForecast({ toxicity, psychotype }) {
+  if(toxicity===undefined) return null;
+
+  let forecast, color, icon;
+  if(toxicity < 25) {
+    forecast = "Динамика здоровая. Если так продолжать — отношения будут крепнуть, доверие расти. Береги это.";
+    color = "#00ffcc"; icon = "🌱";
+  } else if(toxicity < 50) {
+    forecast = "Есть напряжение, но не критично. Через 3-6 месяцев без изменений вы можете отдалиться. Стоит обсудить что не так открыто.";
+    color = "#ffaa00"; icon = "⚖️";
+  } else if(toxicity < 75) {
+    forecast = "Динамика тревожная. Через 6 месяцев без серьёзных перемен скорее всего — эмоциональное истощение, потеря себя, конфликты будут чаще.";
+    color = "#ff8800"; icon = "⚠️";
+  } else {
+    forecast = "Очень тревожная динамика. Поведение собеседника может усиливаться. Подумай о границах и обратись к специалисту — это серьёзно.";
+    color = "#ff2d78"; icon = "🚨";
+  }
+
+  return (
+    <div style={{background:`linear-gradient(135deg,#0d0d1a,${color}11)`,border:`1px solid ${color}33`,borderRadius:16,padding:"18px 20px",marginBottom:14}}>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+        <span style={{fontSize:24}}>{icon}</span>
+        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:2,color:color,margin:0}}>ПРОГНОЗ ДИНАМИКИ</p>
+      </div>
+      <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#ddd",lineHeight:1.6,margin:0}}>{forecast}</p>
+    </div>
+  );
+}
+
+// --- 🆕 ЕЖЕДНЕВНЫЙ ИНСАЙТ -----------------------------------------------------
+const DAILY_INSIGHTS = [
+  { title:"Газлайтинг", text:"Если после разговора ты часто думаешь «может я неправа?» — это может быть признак газлайтинга. Здоровый разговор оставляет ясность, а не сомнения в себе." },
+  { title:"Бомбардировка любовью", text:"Резкое идеализирование в начале отношений (грандиозные подарки, постоянное внимание) часто заканчивается обесцениванием. Здоровая любовь развивается постепенно." },
+  { title:"Серый камень", text:"Если ты в общении с манипулятором — техника «серый камень». Отвечай нейтрально, без эмоций. Им становится неинтересно манипулировать тем кто не реагирует." },
+  { title:"Триангуляция", text:"Когда человек намеренно упоминает других чтобы вызвать ревность или сравнивает тебя с кем-то — это манипулятивный приём, не настоящие чувства." },
+  { title:"Эмоциональный шантаж", text:"«Если ты меня любишь, ты сделаешь...» — классическая фраза эмоционального шантажа. Настоящая любовь не требует доказательств через угрозы." },
+  { title:"Границы — это нормально", text:"Сказать «нет» близкому человеку — не предательство. Здоровые отношения предполагают что у каждого есть право на личное пространство." },
+  { title:"Любовь не должна быть болью", text:"Если отношения постоянно тяжёлые — это не «настоящая любовь». Настоящая любовь — это поддержка и комфорт, а не страдания." },
+];
+
+function DailyInsight() {
+  const [open,setOpen]=useState(false);
+  const today = new Date().getDate();
+  const insight = DAILY_INSIGHTS[today % DAILY_INSIGHTS.length];
+
+  return (
+    <>
+      <div onClick={()=>setOpen(true)} style={{background:"linear-gradient(135deg,#0d1f2d,#1a0d2d)",border:"1px solid #00ffcc33",borderRadius:14,padding:"14px 18px",marginBottom:16,cursor:"pointer",display:"flex",alignItems:"center",gap:12}}>
+        <span style={{fontSize:22}}>💡</span>
+        <div style={{flex:1,textAlign:"left"}}>
+          <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:2,color:"#00ffcc88",margin:"0 0 2px"}}>ИНСАЙТ ДНЯ</p>
+          <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#fff",margin:0}}>{insight.title}</p>
+        </div>
+        <span style={{color:"#00ffcc",fontSize:18}}>→</span>
+      </div>
+      {open&&(
+        <div style={{position:"fixed",inset:0,background:"#000000dd",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",padding:20}} onClick={()=>setOpen(false)}>
+          <div style={{background:"#0d0d1a",border:"1px solid #00ffcc33",borderRadius:16,padding:28,maxWidth:400,width:"100%"}} onClick={e=>e.stopPropagation()}>
+            <div style={{textAlign:"center",fontSize:48,marginBottom:14}}>💡</div>
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:3,color:"#00ffcc",margin:"0 0 8px",textAlign:"center"}}>ИНСАЙТ ДНЯ</p>
+            <h3 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:24,color:"#fff",margin:"0 0 14px",textAlign:"center"}}>{insight.title}</h3>
+            <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#bbb",lineHeight:1.6,margin:"0 0 20px",textAlign:"center"}}>{insight.text}</p>
+            <button onClick={()=>setOpen(false)} style={{width:"100%",background:"linear-gradient(135deg,#00ffcc,#00cc99)",border:"none",borderRadius:10,padding:"12px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#000",cursor:"pointer"}}>
+              Закрыть
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// --- 🆕 ТЕСТ "КТО Я В ОТНОШЕНИЯХ" --------------------------------------------
+const TEST_QUESTIONS = [
+  { q:"Когда партнёр не отвечает на сообщение пару часов, я:", a:[
+    {t:"Спокойно занимаюсь своими делами",s:"secure"},
+    {t:"Начинаю волноваться и проверять онлайн",s:"anxious"},
+    {t:"Мне всё равно, я тоже не всегда отвечаю",s:"avoidant"},
+    {t:"Сомневаюсь — то спокойно, то тревожно",s:"disorganized"},
+  ]},
+  { q:"Если в отношениях конфликт, я обычно:", a:[
+    {t:"Стараюсь спокойно обсудить и найти решение",s:"secure"},
+    {t:"Эмоционально реагирую, нужны заверения в любви",s:"anxious"},
+    {t:"Отстраняюсь, нужно время побыть одному",s:"avoidant"},
+    {t:"То ищу близости, то хочу убежать",s:"disorganized"},
+  ]},
+  { q:"Когда близкий человек делится переживаниями:", a:[
+    {t:"Внимательно слушаю и поддерживаю",s:"secure"},
+    {t:"Чувствую сильную эмпатию, иногда слишком",s:"anxious"},
+    {t:"Не знаю как реагировать, мне неловко",s:"avoidant"},
+    {t:"По-разному, зависит от настроения",s:"disorganized"},
+  ]},
+  { q:"Близость с партнёром для меня:", a:[
+    {t:"Комфортна и естественна",s:"secure"},
+    {t:"Очень важна, иногда боюсь её потерять",s:"anxious"},
+    {t:"Иногда душит, нужно личное пространство",s:"avoidant"},
+    {t:"Желанна и пугает одновременно",s:"disorganized"},
+  ]},
+  { q:"Если партнёр критикует, я:", a:[
+    {t:"Спокойно выслушиваю и думаю над словами",s:"secure"},
+    {t:"Расстраиваюсь, боюсь что он/она разлюбит",s:"anxious"},
+    {t:"Защищаюсь, мне это неприятно",s:"avoidant"},
+    {t:"Реагирую остро, потом замыкаюсь",s:"disorganized"},
+  ]},
+  { q:"После расставания я обычно:", a:[
+    {t:"Грущу, но восстанавливаюсь и иду дальше",s:"secure"},
+    {t:"Долго не могу отпустить, ищу примирения",s:"anxious"},
+    {t:"Быстро переключаюсь, не люблю драм",s:"avoidant"},
+    {t:"То отпускаю, то возвращаюсь снова и снова",s:"disorganized"},
+  ]},
+  { q:"Доверять новому партнёру:", a:[
+    {t:"Естественно, если он показывает себя надёжным",s:"secure"},
+    {t:"Сложно, постоянно нужны подтверждения",s:"anxious"},
+    {t:"Сложно, я предпочитаю не зависеть",s:"avoidant"},
+    {t:"Очень сложно, страшно",s:"disorganized"},
+  ]},
+  { q:"Когда мне грустно, я:", a:[
+    {t:"Обращаюсь за поддержкой к близким",s:"secure"},
+    {t:"Очень нуждаюсь во внимании",s:"anxious"},
+    {t:"Хочу остаться один(одна), справлюсь сам(а)",s:"avoidant"},
+    {t:"Не знаю что мне нужно",s:"disorganized"},
+  ]},
+];
+
+const TEST_RESULTS = {
+  secure: {
+    name:"Надёжный тип",
+    icon:"🌱",
+    color:"#00ffcc",
+    description:"У тебя здоровая привязанность. Ты комфортно чувствуешь себя в близости и в одиночестве. Умеешь доверять, открыто говорить о чувствах, выстраивать границы. Это здоровая база для отношений.",
+    advice:"Ты — пример здоровых отношений. Поддерживай это в себе и помогай партнёру если у него другой тип."
+  },
+  anxious: {
+    name:"Тревожный тип",
+    icon:"💭",
+    color:"#ff2d78",
+    description:"Ты остро нуждаешься в близости и подтверждении любви. Боишься потерять отношения, можешь быть слишком эмоциональной. Часто чувствуешь себя «слишком».",
+    advice:"Учись успокаивать себя сам(а). Партнёр не должен 24/7 доказывать любовь. Развивай свои интересы вне отношений."
+  },
+  avoidant: {
+    name:"Избегающий тип",
+    icon:"🏔",
+    color:"#888888",
+    description:"Ты ценишь независимость и личное пространство. Близость может тебя тяготить, эмоции партнёра — пугать. Предпочитаешь решать всё сам(а).",
+    advice:"Уязвимость — это не слабость. Попробуй открываться партнёру маленькими шагами. Близость не отнимает свободу."
+  },
+  disorganized: {
+    name:"Тревожно-избегающий",
+    icon:"🌪",
+    color:"#ffaa00",
+    description:"Ты одновременно хочешь близости и боишься её. Реакции противоречивы — то ищешь, то отталкиваешь. Часто чувствуешь себя в эмоциональных качелях.",
+    advice:"Этот тип чаще всего связан с травмой. Работа с психологом поможет понять что происходит и найти баланс."
+  }
+};
+
+function AttachmentTest({ onClose }) {
+  const [step,setStep] = useState(0);
+  const [answers,setAnswers] = useState([]);
+
+  const answer = (style) => {
+    const newAnswers = [...answers, style];
+    if(newAnswers.length === TEST_QUESTIONS.length) {
+      setAnswers(newAnswers);
+      setStep(TEST_QUESTIONS.length); // показать результат
+    } else {
+      setAnswers(newAnswers);
+      setStep(s=>s+1);
+    }
+  };
+
+  const result = (() => {
+    const counts = {};
+    answers.forEach(a => counts[a] = (counts[a]||0) + 1);
+    let max = 0, type = "secure";
+    Object.entries(counts).forEach(([k,v]) => { if(v>max){max=v;type=k;} });
+    return TEST_RESULTS[type];
+  })();
+
+  const restart = () => { setStep(0); setAnswers([]); };
+
+  return (
+    <div style={{position:"fixed",inset:0,background:"#080810",zIndex:200,overflowY:"auto"}}>
+      <div style={{maxWidth:480,margin:"0 auto",padding:"24px 20px 80px"}}>
+        <button onClick={onClose} style={{background:"none",border:"none",color:"#666",fontSize:14,cursor:"pointer",marginBottom:20,fontFamily:"'Share Tech Mono',monospace",letterSpacing:2}}>← НАЗАД</button>
+
+        {step < TEST_QUESTIONS.length ? (
+          <>
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:3,color:"#00ffcc",margin:"0 0 8px"}}>ТЕСТ · {step+1} / {TEST_QUESTIONS.length}</p>
+            <h2 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:22,color:"#fff",margin:"0 0 24px",lineHeight:1.3}}>{TEST_QUESTIONS[step].q}</h2>
+
+            {TEST_QUESTIONS[step].a.map((opt,i)=>(
+              <button key={i} onClick={()=>answer(opt.s)} style={{width:"100%",background:"#0d0d1a",border:"1px solid #ffffff15",borderRadius:12,padding:"16px 18px",marginBottom:10,fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#ddd",cursor:"pointer",textAlign:"left",lineHeight:1.5,transition:"all .2s"}}
+                onTouchStart={e=>{e.currentTarget.style.borderColor="#00ffcc";e.currentTarget.style.background="#0d1f2d"}}
+                onTouchEnd={e=>{e.currentTarget.style.borderColor="#ffffff15";e.currentTarget.style.background="#0d0d1a"}}>
+                {opt.t}
+              </button>
+            ))}
+
+            <div style={{height:3,background:"#1a1a2e",borderRadius:2,marginTop:24,overflow:"hidden"}}>
+              <div style={{height:"100%",width:`${(step/TEST_QUESTIONS.length)*100}%`,background:"#00ffcc",transition:"width .3s"}}/>
+            </div>
+          </>
+        ) : (
+          <>
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:3,color:"#00ffcc",margin:"0 0 8px",textAlign:"center"}}>ТВОЙ РЕЗУЛЬТАТ</p>
+            <div style={{textAlign:"center",fontSize:64,margin:"20px 0"}}>{result.icon}</div>
+            <h2 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:30,color:result.color,margin:"0 0 16px",textAlign:"center"}}>{result.name}</h2>
+            <div style={{background:"#0d0d1a",border:`1px solid ${result.color}33`,borderRadius:14,padding:"18px",marginBottom:14}}>
+              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#bbb",lineHeight:1.6,margin:0}}>{result.description}</p>
+            </div>
+            <div style={{background:"linear-gradient(135deg,#0d2d1a,#0a1a2d)",border:"1px solid #00ffcc33",borderRadius:14,padding:"18px",marginBottom:20}}>
+              <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:2,color:"#00ffcc",margin:"0 0 8px"}}>РЕКОМЕНДАЦИЯ</p>
+              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#ddd",lineHeight:1.6,margin:0}}>{result.advice}</p>
+            </div>
+
+            <button onClick={()=>{
+              const txt = `Я прошла тест в Psycho Detector — мой тип привязанности: ${result.name} ${result.icon}\n\nПройди и ты: t.me/psychodetector_bot/PsychoDetector`;
+              if(navigator.share) navigator.share({text:txt});
+              else navigator.clipboard.writeText(txt);
+            }} style={{width:"100%",background:"linear-gradient(135deg,#00ffcc,#00cc99)",border:"none",borderRadius:12,padding:"14px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#000",cursor:"pointer",marginBottom:10}}>
+              Поделиться результатом
+            </button>
+            <button onClick={restart} style={{width:"100%",background:"transparent",border:"1px solid #333",borderRadius:12,padding:"12px",fontFamily:"'Share Tech Mono',monospace",fontSize:12,color:"#666",cursor:"pointer",letterSpacing:2}}>
+              ПРОЙТИ ЕЩЁ РАЗ
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// --- 🆕 ПРОФИЛИ ПСИХОТИПОВ (свайп) -------------------------------------------
+const PSYCHO_PROFILES = [
+  { icon:"🪞", name:"Холодный Нарцисс", color:"#888888", traits:["Эгоцентризм","Низкая эмпатия","Самовлюблённость"],
+    desc:"Считает себя особенным. Не способен глубоко сопереживать. Использует других для подкрепления своей значимости.",
+    signs:"Постоянно говорит о себе. Обесценивает достижения других. Не извиняется. Использует тебя для статуса."
+  },
+  { icon:"💨", name:"Газлайтер", color:"#ff2d78", traits:["Манипулятивность","Отрицание реальности","Перекладывание вины"],
+    desc:"Заставляет сомневаться в собственном восприятии. Отрицает свои слова и действия. Перекручивает события.",
+    signs:"«Ты всё придумала», «Этого не было», «Ты слишком чувствительная». После разговора ты чувствуешь себя сумасшедшей."
+  },
+  { icon:"🎭", name:"Эмоциональный Манипулятор", color:"#ffaa00", traits:["Шантаж","Виктимизация","Контроль"],
+    desc:"Использует эмоции как оружие. Играет жертву или агрессора в зависимости от ситуации.",
+    signs:"«Если ты меня любишь, ты...», обиды без причины, молчаливое наказание, угрозы себе или уходом."
+  },
+  { icon:"🕸", name:"Контролёр", color:"#cc6600", traits:["Ревнивость","Слежка","Изоляция"],
+    desc:"Хочет знать всё о твоей жизни. Изолирует от друзей и семьи. Контролирует время, деньги, общение.",
+    signs:"Постоянные вопросы где ты и с кем. Критика твоих друзей. Контроль расходов. «Они тебя не любят, только я»."
+  },
+  { icon:"❄️", name:"Эмоционально Недоступный", color:"#3d8bdb", traits:["Закрытость","Отстранение","Холодность"],
+    desc:"Избегает глубоких разговоров. Не выражает чувств. Дистанцируется когда становится слишком близко.",
+    signs:"«Я не люблю говорить об этом». Не делится переживаниями. Исчезает после близости. Боится обязательств."
+  },
+  { icon:"🌪", name:"Качели", color:"#7B2FBE", traits:["Непредсказуемость","Идеализация","Обесценивание"],
+    desc:"То боготворит, то обесценивает. Резкие смены настроения и отношения. Создаёт эмоциональную зависимость.",
+    signs:"Сегодня «ты лучшая», завтра «ты ничего не значишь». После ссоры — бомба любви. Ты не знаешь чего ждать."
+  },
+];
+
+function PsychoProfiles({ onClose }) {
+  const [index,setIndex] = useState(0);
+  const profile = PSYCHO_PROFILES[index];
+
+  return (
+    <div style={{position:"fixed",inset:0,background:"#080810",zIndex:200,overflowY:"auto"}}>
+      <div style={{maxWidth:480,margin:"0 auto",padding:"24px 20px 80px"}}>
+        <button onClick={onClose} style={{background:"none",border:"none",color:"#666",fontSize:14,cursor:"pointer",marginBottom:14,fontFamily:"'Share Tech Mono',monospace",letterSpacing:2}}>← НАЗАД</button>
+        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:3,color:"#00ffcc",margin:"0 0 4px"}}>ПСИХОТИПЫ · {index+1} / {PSYCHO_PROFILES.length}</p>
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#666",margin:"0 0 24px"}}>Узнай о разных типах поведения</p>
+
+        <div style={{background:`linear-gradient(135deg,#0d0d1a,${profile.color}15)`,border:`1px solid ${profile.color}44`,borderRadius:20,padding:"28px 22px",marginBottom:20,minHeight:380}}>
+          <div style={{textAlign:"center",fontSize:64,marginBottom:16}}>{profile.icon}</div>
+          <h2 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:26,color:profile.color,margin:"0 0 16px",textAlign:"center"}}>{profile.name}</h2>
+
+          <div style={{display:"flex",flexWrap:"wrap",gap:6,justifyContent:"center",marginBottom:18}}>
+            {profile.traits.map(t=>(
+              <span key={t} style={{background:`${profile.color}15`,color:profile.color,border:`1px solid ${profile.color}33`,borderRadius:20,padding:"4px 12px",fontFamily:"'Share Tech Mono',monospace",fontSize:11}}>{t}</span>
+            ))}
+          </div>
+
+          <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#ccc",lineHeight:1.6,margin:"0 0 18px"}}>{profile.desc}</p>
+
+          <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:2,color:profile.color,margin:"0 0 8px"}}>ПРИЗНАКИ</p>
+          <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#aaa",lineHeight:1.6,margin:0}}>{profile.signs}</p>
+        </div>
+
+        <div style={{display:"flex",gap:10,marginBottom:14}}>
+          <button onClick={()=>setIndex(i=>Math.max(0,i-1))} disabled={index===0} style={{flex:1,background:index===0?"#0a0a14":"#0d0d1a",border:"1px solid #ffffff15",borderRadius:12,padding:"14px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:index===0?"#333":"#aaa",cursor:index===0?"default":"pointer"}}>
+            ← Назад
+          </button>
+          <button onClick={()=>setIndex(i=>Math.min(PSYCHO_PROFILES.length-1,i+1))} disabled={index===PSYCHO_PROFILES.length-1} style={{flex:1,background:"linear-gradient(135deg,#00ffcc22,#00ffcc11)",border:"1px solid #00ffcc44",borderRadius:12,padding:"14px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#00ffcc",cursor:"pointer"}}>
+            Далее →
+          </button>
+        </div>
+
+        <div style={{display:"flex",gap:4,justifyContent:"center"}}>
+          {PSYCHO_PROFILES.map((_,i)=>(
+            <div key={i} style={{width:i===index?24:6,height:6,borderRadius:3,background:i===index?"#00ffcc":"#333",transition:"all .3s"}}/>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SupportButton() {
   const [open, setOpen] = useState(false);
   return (
@@ -284,7 +669,7 @@ function SupportButton() {
 }
 
 // --- Screen 1: Welcome --------------------------------------------------------
-function ScreenWelcome({ onAnalyze, onRedFlags }) {
+function ScreenWelcome({ onAnalyze, onRedFlags, onOpenTest, onOpenProfiles }) {
   const [mode,setMode]=useState("voice");
   const [text,setText]=useState("");
   const [pulse,setPulse]=useState(false);
@@ -510,6 +895,25 @@ function ScreenWelcome({ onAnalyze, onRedFlags }) {
           🚩 Проверить сообщение или скриншот на красные флаги
         </button>
 
+        {/* Инсайт дня */}
+        <div style={{marginTop:16}}>
+          <DailyInsight/>
+        </div>
+
+        {/* Дополнительные фишки */}
+        <div style={{display:"flex",gap:8,marginTop:8}}>
+          <button onClick={()=>onOpenTest()} style={{flex:1,background:"#0d0d1a",border:"1px solid #ffffff15",borderRadius:12,padding:"14px 10px",cursor:"pointer",textAlign:"center"}}>
+            <div style={{fontSize:24,marginBottom:6}}>🧬</div>
+            <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:13,color:"#fff"}}>Кто я в отношениях?</div>
+            <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#666",marginTop:2}}>тест из 8 вопросов</div>
+          </button>
+          <button onClick={()=>onOpenProfiles()} style={{flex:1,background:"#0d0d1a",border:"1px solid #ffffff15",borderRadius:12,padding:"14px 10px",cursor:"pointer",textAlign:"center"}}>
+            <div style={{fontSize:24,marginBottom:6}}>🎭</div>
+            <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:13,color:"#fff"}}>Психотипы</div>
+            <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#666",marginTop:2}}>обучающие карточки</div>
+          </button>
+        </div>
+
         <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#556655",marginTop:14,letterSpacing:1}}>✓ ПЕРВЫЙ АНАЛИЗ БЕСПЛАТНО · ДАННЫЕ НЕ СОХРАНЯЮТСЯ</p>
       </div>
     </div>
@@ -554,8 +958,8 @@ function AdviceBlock({ advice }) {
         <div style={{display:"flex",alignItems:"center",gap:10}}>
           <span style={{fontSize:24}}></span>
           <div>
-            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:2,color:"#00ffcc",margin:"0 0 2px"}}>СОВЕТ ПСИХОЛОГА</p>
-            <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#fff",margin:0}}>{advice.title||"Как вести себя с этим типом"}</p>
+            <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:2,color:"#00ffcc",margin:"0 0 2px"}}>ОБЩИЕ РЕКОМЕНДАЦИИ</p>
+            <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#fff",margin:0}}>{advice.title||"Как взаимодействовать с этим типом"}</p>
           </div>
         </div>
         <span style={{color:"#00ffcc",fontSize:18,transition:"transform .3s",transform:open?"rotate(180deg)":"rotate(0deg)"}}>▾</span>
@@ -702,6 +1106,8 @@ function ScreenResult({ data, onReset }) {
         {data.summary&&<p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#aaa",margin:0,lineHeight:1.6}}>{data.summary}</p>}
       </div>
       <UrgencyTimer/>
+      <ResultDisclaimer/>
+      <RelationshipForecast toxicity={data.toxicity} psychotype={data.psychotype}/>
       <div style={{background:"#0d0d1a",border:`1px solid ${toxColor}44`,borderRadius:16,padding:"24px 20px",marginBottom:14,display:"flex",alignItems:"center",gap:20,boxShadow:`0 0 40px ${toxColor}11`}}>
         <ToxicGauge value={data.toxicity}/>
         <div style={{flex:1}}>
@@ -735,7 +1141,7 @@ function ScreenResult({ data, onReset }) {
         <div style={{background:"linear-gradient(135deg,#1a0d20,#0d0d1a)",border:"1px solid #ff2d7855",borderRadius:16,padding:"24px 20px",marginBottom:14,textAlign:"center"}}>
           <div style={{fontSize:36,marginBottom:10}}></div>
           <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:20,color:"#fff",marginBottom:8}}>Глубокий разбор личности</div>
-          <div style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",marginBottom:20,lineHeight:1.5}}>Главная слабость · Идеальный ответ · Как защититься</div>
+          <div style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",marginBottom:20,lineHeight:1.5}}>Главная слабость · Варианты ответа · Как защититься</div>
           <button onClick={()=>setUnlocked(true)} style={{background:"linear-gradient(135deg,#ff2d78,#ff6b35)",border:"none",borderRadius:10,padding:"14px 32px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#fff",cursor:"pointer",boxShadow:"0 0 30px #ff2d7855",letterSpacing:1}}>Разблокировать за 1$</button>
           <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#2a2a3a",marginTop:12}}>ОПЛАТА ЧЕРЕЗ TELEGRAM STARS</div>
         </div>
@@ -744,13 +1150,13 @@ function ScreenResult({ data, onReset }) {
           {data.boundary_violation&&<><p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:3,color:"#00ffcc",margin:"0 0 8px"}}>НАРУШЕНИЕ ГРАНИЦ</p><p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#ccc",lineHeight:1.6,margin:"0 0 18px"}}>🛡️ {data.boundary_violation}</p></>}
           <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:2,color:"#00ffcc",margin:"0 0 8px"}}>ГЛАВНАЯ СЛАБОСТЬ</p>
           <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#ddd",lineHeight:1.6,margin:"0 0 18px"}}>⚠️ {data.main_weakness}</p>
-          <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:2,color:"#00ffcc",margin:"0 0 10px"}}>ИДЕАЛЬНЫЙ ОТВЕТ</p>
+          <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,letterSpacing:2,color:"#00ffcc",margin:"0 0 10px"}}>ВАРИАНТЫ ОТВЕТА</p>
           <button onClick={()=>setShowResp(r=>!r)} style={{width:"100%",background:"#00ffcc11",border:"1px solid #00ffcc44",borderRadius:10,padding:"14px",cursor:"pointer",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#00ffcc",letterSpacing:.5}}>
-            {showResp?`💬 ${data.ideal_response}`:"Показать как ответить"}
+            {showResp?`💬 ${data.ideal_response}`:"Показать варианты ответа"}
           </button>
         </div>
       )}
-      {/* Совет психолога */}
+      {/* Общие рекомендации */}
       <AdviceBlock advice={data.advice}/>
 
       {/* Тест на самооценку */}
@@ -812,6 +1218,8 @@ export default function App() {
   const [error,setError]=useState("");
   const [isVoice,setIsVoice]=useState(false);
   const [showRedFlags,setShowRedFlags]=useState(false);
+  const [showTest,setShowTest]=useState(false);
+  const [showProfiles,setShowProfiles]=useState(false);
 
   useEffect(()=>{
     try{ if(!safeGet("pd_ob")) setScreen("onboarding"); }catch(e){}
@@ -837,7 +1245,9 @@ export default function App() {
       {screen==="onboarding" && <ScreenOnboarding onDone={doneOnboarding}/>}
       {screen==="welcome"    && <>
         {showRedFlags && <RedFlagsModal onClose={()=>setShowRedFlags(false)} onAnalyze={handleAnalyze}/>}
-        <ScreenWelcome onAnalyze={handleAnalyze} onRedFlags={()=>setShowRedFlags(true)}/>
+        {showTest && <AttachmentTest onClose={()=>setShowTest(false)}/>}
+        {showProfiles && <PsychoProfiles onClose={()=>setShowProfiles(false)}/>}
+        <ScreenWelcome onAnalyze={handleAnalyze} onRedFlags={()=>setShowRedFlags(true)} onOpenTest={()=>setShowTest(true)} onOpenProfiles={()=>setShowProfiles(true)}/>
       </>}
       {screen==="scanning"   && <ScreenScanning isVoice={isVoice}/>}
       {screen==="result"     && result && <>
@@ -847,6 +1257,7 @@ export default function App() {
       {screen==="error"      && <ScreenError message={error} onReset={reset}/>}
       {/* Кнопка поддержки видна на всех экранах кроме онбординга */}
       {screen!=="onboarding" && <SupportButton/>}
+      {screen!=="onboarding" && <HelpButton/>}
     </div>
   );
 }
