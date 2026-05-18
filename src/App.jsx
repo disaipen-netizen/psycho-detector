@@ -263,8 +263,8 @@ function HelpButton() {
   const [open,setOpen]=useState(false);
   return (
     <>
-      <button onClick={()=>setOpen(true)} style={{position:"fixed",top:14,right:60,zIndex:50,width:40,height:40,borderRadius:"50%",background:"#1a0d0d",border:"1px solid #ff2d7844",color:"#ff2d78",fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 0 15px #ff2d7822"}}>
-        🆘
+      <button onClick={()=>setOpen(true)} style={{position:"fixed",top:14,right:64,zIndex:50,minWidth:56,height:56,borderRadius:28,background:"linear-gradient(135deg,#3d0a0a,#1a0d0d)",border:"2px solid #ff2d78",color:"#ff2d78",fontSize:13,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4,padding:"0 14px",boxShadow:"0 0 25px #ff2d7855",fontFamily:"'Rajdhani',sans-serif",letterSpacing:1}}>
+        <span style={{fontSize:18}}>🆘</span><span>SOS</span>
       </button>
       {open&&(
         <div style={{position:"fixed",inset:0,background:"#000000dd",zIndex:200,display:"flex",alignItems:"flex-end",justifyContent:"center",padding:20}} onClick={()=>setOpen(false)}>
@@ -375,7 +375,7 @@ function DailyInsight() {
         <span style={{fontSize:22}}>💡</span>
         <div style={{flex:1,textAlign:"left"}}>
           <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:2,color:"#00ffcc88",margin:"0 0 2px"}}>ИНСАЙТ ДНЯ</p>
-          <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#fff",margin:0}}>{insight.title}</p>
+          <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:17,color:"#fff",margin:0}}>{insight.title}</p>
         </div>
         <span style={{color:"#00ffcc",fontSize:18}}>→</span>
       </div>
@@ -670,7 +670,7 @@ function SupportButton() {
 
 // --- Screen 1: Welcome --------------------------------------------------------
 function ScreenWelcome({ onAnalyze, onRedFlags, onOpenTest, onOpenProfiles }) {
-  const [mode,setMode]=useState("voice");
+  const [mode,setMode]=useState("image");
   const [text,setText]=useState("");
   const [pulse,setPulse]=useState(false);
   const [loading,setLoading]=useState(false);
@@ -754,13 +754,13 @@ function ScreenWelcome({ onAnalyze, onRedFlags, onOpenTest, onOpenProfiles }) {
         <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,letterSpacing:5,color:"#00ffcc88",marginBottom:14}}>PSYCHO DETECTOR v2.1</p>
         <LiveCounter/>
         <h1 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:38,lineHeight:1.05,margin:"0 0 12px",color:"#fff",letterSpacing:-1}}>Узнай кто<br/><span style={{color:"#00ffcc"}}>на самом</span><br/>деле рядом</h1>
-        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",lineHeight:1.5,margin:"0 0 6px"}}>Партнёр · Коллега · Подруга · Новый знакомый</p>
-        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#555",lineHeight:1.5,margin:"0 0 20px"}}>Голосовое, скриншот или текст — ИИ раскроет скрытые намерения</p>
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#aaa",lineHeight:1.5,margin:"0 0 6px"}}>Партнёр · Коллега · Подруга · Новый знакомый</p>
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",lineHeight:1.5,margin:"0 0 20px"}}>Голосовое, скриншот или текст — ИИ раскроет скрытые намерения</p>
 
         {/* Tabs */}
         <div style={{display:"flex",gap:4,marginBottom:16,background:"#111118",border:"1px solid #222",borderRadius:20,padding:"4px"}}>
           {MODES.map(m=>(
-            <button key={m.id} onClick={()=>setMode(m.id)} style={{flex:1,background:mode===m.id?"#00ffcc":"#1a1a2e",color:mode===m.id?"#000":"#aaaaaa",border:mode===m.id?"none":"1px solid #333",borderRadius:14,padding:"8px 0",fontFamily:"'Rajdhani',sans-serif",fontSize:13,fontWeight:700,cursor:"pointer",transition:"all .2s"}}>
+            <button key={m.id} onClick={()=>setMode(m.id)} style={{flex:1,background:mode===m.id?"#00ffcc":"#1a1a2e",color:mode===m.id?"#000":"#aaaaaa",border:mode===m.id?"none":"1px solid #333",borderRadius:14,padding:"10px 0",fontFamily:"'Rajdhani',sans-serif",fontSize:15,fontWeight:700,cursor:"pointer",transition:"all .2s"}}>
               {m.label}
             </button>
           ))}
@@ -872,9 +872,9 @@ function ScreenWelcome({ onAnalyze, onRedFlags, onOpenTest, onOpenProfiles }) {
             <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:12,color:"#556655",marginTop:10,lineHeight:1.6,textAlign:"center"}}>MP3, OGG, M4A, WebM</p>
             <div style={{marginTop:12,background:"#0d1a0d",border:"1px solid #00ffcc22",borderRadius:10,padding:"10px 14px"}}>
               <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#00ffcc88",margin:"0 0 6px",letterSpacing:2}}>КАК СКАЧАТЬ ГОЛОСОВОЕ ИЗ TELEGRAM:</p>
-              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#888",margin:"0 0 4px",lineHeight:1.5}}>1. Зажми голосовое сообщение → Сохранить</p>
-              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#888",margin:"0 0 4px",lineHeight:1.5}}>2. Или перешли боту @psychodetector_bot напрямую</p>
-              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#00ffcc88",margin:0,lineHeight:1.5}}>→ Бот автоматически проанализирует!</p>
+              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#aaa",margin:"0 0 6px",lineHeight:1.5}}>1. Зажми голосовое сообщение → Сохранить</p>
+              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#aaa",margin:"0 0 6px",lineHeight:1.5}}>2. Или перешли боту @psychodetector_bot напрямую</p>
+              <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:14,color:"#00ffcc",margin:0,lineHeight:1.5}}>→ Бот автоматически проанализирует!</p>
             </div>
           </div>
         )}
@@ -891,7 +891,7 @@ function ScreenWelcome({ onAnalyze, onRedFlags, onOpenTest, onOpenProfiles }) {
         </button>
 
         {/* Красные флаги */}
-        <button onClick={()=>onRedFlags()} style={{width:"100%",marginTop:10,background:"#1a0a0a",border:"1px solid #ff2d7866",borderRadius:12,padding:"13px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:15,color:"#ff2d78",cursor:"pointer",letterSpacing:.5}}>
+        <button onClick={()=>onRedFlags()} style={{width:"100%",marginTop:10,background:"#1a0a0a",border:"1px solid #ff2d7866",borderRadius:12,padding:"13px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#ff2d78",cursor:"pointer",letterSpacing:.5}}>
           🚩 Проверить сообщение или скриншот на красные флаги
         </button>
 
@@ -904,17 +904,17 @@ function ScreenWelcome({ onAnalyze, onRedFlags, onOpenTest, onOpenProfiles }) {
         <div style={{display:"flex",gap:8,marginTop:8}}>
           <button onClick={()=>onOpenTest()} style={{flex:1,background:"#0d0d1a",border:"1px solid #ffffff15",borderRadius:12,padding:"14px 10px",cursor:"pointer",textAlign:"center"}}>
             <div style={{fontSize:24,marginBottom:6}}>🧬</div>
-            <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:13,color:"#fff"}}>Кто я в отношениях?</div>
-            <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#666",marginTop:2}}>тест из 8 вопросов</div>
+            <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:14,color:"#fff",lineHeight:1.3}}>Кто я в отношениях?</div>
+            <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#888",marginTop:4}}>тест из 8 вопросов</div>
           </button>
           <button onClick={()=>onOpenProfiles()} style={{flex:1,background:"#0d0d1a",border:"1px solid #ffffff15",borderRadius:12,padding:"14px 10px",cursor:"pointer",textAlign:"center"}}>
             <div style={{fontSize:24,marginBottom:6}}>🎭</div>
-            <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:13,color:"#fff"}}>Психотипы</div>
-            <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:9,color:"#666",marginTop:2}}>обучающие карточки</div>
+            <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:14,color:"#fff"}}>Психотипы</div>
+            <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:10,color:"#888",marginTop:4}}>обучающие карточки</div>
           </button>
         </div>
 
-        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#556655",marginTop:14,letterSpacing:1}}>✓ ПЕРВЫЙ АНАЛИЗ БЕСПЛАТНО · ДАННЫЕ НЕ СОХРАНЯЮТСЯ</p>
+        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:12,color:"#779977",marginTop:14,letterSpacing:1}}>✓ ПЕРВЫЙ АНАЛИЗ БЕСПЛАТНО · ДАННЫЕ НЕ СОХРАНЯЮТСЯ</p>
       </div>
     </div>
   );
@@ -1031,7 +1031,7 @@ function RedFlagsModal({ onClose, onAnalyze }) {
           </div>
           <button onClick={onClose} style={{background:"none",border:"none",color:"#444",fontSize:22,cursor:"pointer"}}>✕</button>
         </div>
-        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",marginBottom:16,lineHeight:1.5}}>
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#aaa",marginBottom:16,lineHeight:1.5}}>
           Вставь текст или загрузи скриншот — проверим есть ли тревожные признаки
         </p>
         {/* Загрузка скриншота */}
@@ -1141,7 +1141,7 @@ function ScreenResult({ data, onReset }) {
         <div style={{background:"linear-gradient(135deg,#1a0d20,#0d0d1a)",border:"1px solid #ff2d7855",borderRadius:16,padding:"24px 20px",marginBottom:14,textAlign:"center"}}>
           <div style={{fontSize:36,marginBottom:10}}></div>
           <div style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:20,color:"#fff",marginBottom:8}}>Глубокий разбор личности</div>
-          <div style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",marginBottom:20,lineHeight:1.5}}>Главная слабость · Варианты ответа · Как защититься</div>
+          <div style={{fontFamily:"'Rajdhani',sans-serif",fontSize:16,color:"#aaa",marginBottom:20,lineHeight:1.5}}>Главная слабость · Варианты ответа · Как защититься</div>
           <button onClick={()=>setUnlocked(true)} style={{background:"linear-gradient(135deg,#ff2d78,#ff6b35)",border:"none",borderRadius:10,padding:"14px 32px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#fff",cursor:"pointer",boxShadow:"0 0 30px #ff2d7855",letterSpacing:1}}>Разблокировать за 1$</button>
           <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#2a2a3a",marginTop:12}}>ОПЛАТА ЧЕРЕЗ TELEGRAM STARS</div>
         </div>
@@ -1163,7 +1163,7 @@ function ScreenResult({ data, onReset }) {
       <div style={{background:"#0d0d1a",border:"1px solid #ffffff0a",borderRadius:16,padding:"20px",marginBottom:14,textAlign:"center"}}>
         <span style={{fontSize:32,display:"block",marginBottom:8}}>🪞</span>
         <p style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:16,color:"#fff",margin:"0 0 6px"}}>А как выглядишь ты?</p>
-        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:13,color:"#555",margin:"0 0 14px",lineHeight:1.5}}>Дай другу проанализировать твои сообщения — узнай свой психотип</p>
+        <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#888",margin:"0 0 14px",lineHeight:1.5}}>Дай другу проанализировать твои сообщения — узнай свой психотип</p>
         <button onClick={()=>{
           const text="Привет! Проверь мои сообщения - узнай мой психотип 👁\nt.me/psychodetector_bot/PsychoDetector";
           if(navigator.share){navigator.share({text});}
@@ -1212,8 +1212,54 @@ function ScreenError({ message, onReset }) {
 function safeGet(key){try{return localStorage.getItem(key);}catch(e){return null;}}
 function safeSet(key,val){try{localStorage.setItem(key,val);}catch(e){}}
 
+// --- 🆕 ОБЯЗАТЕЛЬНЫЙ ДИСКЛЕЙМЕР ПРИ ЗАПУСКЕ ---------------------------------
+function MandatoryDisclaimer({ onAccept }) {
+  return (
+    <div style={{minHeight:"100vh",background:"#080810",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"32px 20px",position:"relative"}}>
+      <div style={{position:"fixed",inset:0,zIndex:0,opacity:.04,backgroundImage:"linear-gradient(#ff2d78 1px,transparent 1px),linear-gradient(90deg,#ff2d78 1px,transparent 1px)",backgroundSize:"40px 40px"}}/>
+
+      <div style={{zIndex:1,maxWidth:440,width:"100%",textAlign:"center"}}>
+        {/* Восклицательный знак */}
+        <div style={{width:96,height:96,margin:"0 auto 24px",borderRadius:"50%",background:"linear-gradient(135deg,#3d0a0a,#1a0d0d)",border:"3px solid #ff2d78",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 0 40px #ff2d7866"}}>
+          <span style={{fontSize:54,color:"#ff2d78",fontWeight:900,lineHeight:1}}>!</span>
+        </div>
+
+        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:12,letterSpacing:4,color:"#ff2d78",margin:"0 0 12px"}}>ВАЖНО ПРОЧИТАТЬ</p>
+
+        <h1 style={{fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:30,color:"#fff",margin:"0 0 24px",lineHeight:1.2}}>
+          Перед использованием
+        </h1>
+
+        <div style={{background:"#1a0d0d",border:"1px solid #ff2d7833",borderRadius:16,padding:"24px 22px",marginBottom:20,textAlign:"left"}}>
+          <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:17,color:"#fff",lineHeight:1.6,margin:"0 0 16px",fontWeight:600}}>
+            Это аналитический инструмент, а не диагноз.
+          </p>
+          <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#ddd",lineHeight:1.7,margin:"0 0 16px"}}>
+            ИИ анализирует паттерны общения, но <span style={{color:"#ff2d78",fontWeight:600}}>не заменяет консультацию психолога</span>.
+          </p>
+          <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#ddd",lineHeight:1.7,margin:"0 0 16px"}}>
+            Результаты — это повод для размышления и рефлексии, а не окончательная характеристика человека.
+          </p>
+          <p style={{fontFamily:"'Rajdhani',sans-serif",fontSize:15,color:"#ddd",lineHeight:1.7,margin:0}}>
+            При признаках абьюза, насилия или серьёзных проблем — <span style={{color:"#ff2d78",fontWeight:600}}>обязательно обратись к специалисту</span> или на горячую линию помощи.
+          </p>
+        </div>
+
+        <button onClick={onAccept} style={{width:"100%",background:"linear-gradient(135deg,#00ffcc,#00cc99)",border:"none",borderRadius:14,padding:"16px",fontFamily:"'Rajdhani',sans-serif",fontWeight:700,fontSize:18,color:"#000",cursor:"pointer",letterSpacing:1,boxShadow:"0 0 30px #00ffcc44"}}>
+          Понятно, продолжить
+        </button>
+
+        <p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:11,color:"#555",marginTop:16,letterSpacing:1}}>
+          Нажимая «Продолжить», ты соглашаешься с условиями
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [screen,setScreen]=useState("welcome");
+  const [disclaimerAccepted,setDisclaimerAccepted]=useState(false);
   const [result,setResult]=useState(null);
   const [error,setError]=useState("");
   const [isVoice,setIsVoice]=useState(false);
@@ -1238,6 +1284,11 @@ export default function App() {
 
   const doneOnboarding=()=>{ safeSet("pd_ob","1"); setScreen("welcome"); };
   const reset=()=>{ setScreen("welcome"); setResult(null); setError(""); };
+
+  // Дисклеймер показывается при каждом запуске
+  if(!disclaimerAccepted) {
+    return <MandatoryDisclaimer onAccept={()=>setDisclaimerAccepted(true)}/>;
+  }
 
   return (
     <div style={{background:"#080810",color:"#e0e0e0",minHeight:"100vh",position:"relative",overflowX:"hidden"}}>
